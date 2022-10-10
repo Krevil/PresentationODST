@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:avalon="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:PresentationODST"
         mc:Ignorable="d"
-        Title="Presentation ODST" Height="450" Width="800">
+        Title="Presentation ODST">
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="CommandBinding_Open_Executed"/>
         <CommandBinding Command="New" Executed="CommandBinding_New_Executed"/>
@@ -80,27 +82,30 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Menu Height="20" Grid.ColumnSpan="3" Grid.Row="0" Background="#FF292929" >
             <MenuItem Header="File" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
-                <MenuItem Command="New" Header="New Tag..." x:Name="NewFile" BorderThickness="0" />
-                <MenuItem Command="Open" Header="Open Tag..." x:Name="OpenFile" BorderThickness="0"/>
-                <MenuItem Command="Save" Header="Save Tag..." x:Name="SaveFile" BorderThickness="0"/>
+                <MenuItem Command="New" Header="New..." x:Name="NewFile" BorderThickness="0" />
+                <MenuItem Command="Open" Header="Open..." x:Name="OpenFile" BorderThickness="0"/>
+                <MenuItem Command="Save" Header="Save" x:Name="SaveFile" BorderThickness="0"/>
+                <MenuItem Header="Save As..." x:Name="SaveFileAs" BorderThickness="0" Click="SaveFileAs_Click"/>
+                <MenuItem Header="Exit" x:Name="Exit" BorderThickness="0" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="Edit" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
                 <MenuItem Header="ODSTEK Path" Click="ODSTEKPath_Click"/>
             </MenuItem>
         </Menu>
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3">
-            <Grid x:Name="TagViewerGrid" Background="#FFAAAAAA">
-
-            </Grid>
-        </ScrollViewer>
-        <!-- <TextBox x:Name="InterfaceConsole" IsReadOnly="True" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1" TextWrapping="Wrap" Text="" Background="Black" BorderThickness="0" Foreground="White" FontFamily="Consolas" FontSize="16"/> -->
-        <TextBox x:Name="InputField" Grid.Row="2" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="" Background="#FF4D4D4D" Foreground="White" BorderThickness="0" PreviewKeyUp="InputField_PreviewKeyUp"/>
-        <Rectangle x:Name="StatusBar" Grid.Row="3" Grid.ColumnSpan="3">
+        <avalon:DockingManager x:Name="TagDock" Grid.Row="1" Grid.ColumnSpan="3" Background="{x:Null}">
+            <avalon:LayoutRoot ElementRemoved="LayoutRoot_ElementRemoved">
+                <avalon:LayoutPanel>
+                    <avalon:LayoutDocumentPaneGroup>
+                        <avalon:LayoutDocumentPane x:Name="TagDocuments"/>
+                    </avalon:LayoutDocumentPaneGroup>
+                </avalon:LayoutPanel>
+            </avalon:LayoutRoot>
+        </avalon:DockingManager>
+        <Rectangle x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="3">
             <Rectangle.Fill>
                 <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
                     <GradientStop Color="#FF3587FF" Offset="0"/>
@@ -108,6 +113,6 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <TextBlock x:Name="StatusBarText" Text="Disconnected" Grid.ColumnSpan="3" Grid.Row="3" FontSize="10" Foreground="White" Margin="4,0,-4,0"/>
+        <TextBlock x:Name="StatusBarText" Text="Disconnected" Grid.ColumnSpan="3" Grid.Row="2" Foreground="White" Margin="4,0,-4,0"/>
     </Grid>
 </Window>

@@ -1,0 +1,35 @@
+﻿using System.Windows;
+
+namespace PresentationODST.Utilities
+{
+    class Path
+    {
+        public static string GetTagsRelativePath(string path)
+        {
+            if (path.Contains(Properties.Settings.Default.ODSTEKPath))
+                return path.Substring(Properties.Settings.Default.ODSTEKPath.Length + 6);
+            else 
+                return path;
+        }
+
+        public static string ODSTEKTagsPath = Properties.Settings.Default.ODSTEKPath + @"\tags\";
+
+        public static void SetODSTEKPath()
+        {
+            System.Windows.Forms.FolderBrowserDialog fbg = new System.Windows.Forms.FolderBrowserDialog();
+            if (fbg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Properties.Settings.Default.ODSTEKPath = fbg.SelectedPath;
+                Properties.Settings.Default.Save();
+            }
+            else if (fbg.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("Path not found, please try again.", "Error");
+            }
+        }
+    }
+}

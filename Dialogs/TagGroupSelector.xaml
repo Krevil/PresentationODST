@@ -1,0 +1,39 @@
+﻿<Window x:Class="PresentationODST.Dialogs.TagGroupSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PresentationODST.Dialogs"
+             mc:Ignorable="d" 
+             Height="400" Title="New Tag" Width="400" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Topmost="True">
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="Command_Close_Binding_Executed"/>
+    </Window.CommandBindings>
+    <Grid Background="#FF343434">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="315"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="90"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="TagListBox" Width="375" Height="315" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFCBCBCB" ItemsSource="{Binding TagGroups}">
+            <!-- Keeping the template for now in case it's needed - Krevil 06/10/22 -->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Extension}">
+                        <TextBlock.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleCLick" Command="Close"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button x:Name="OkButton" Content="OK" Grid.Row="3" Grid.Column="1" Height="21" Width="78" Click="OkButton_Click"/>
+        <Button x:Name="CancelButton" Content="Cancel" Grid.Row="3" Grid.Column="2" Height="21" Width="78" Click="CancelButton_Click"/>
+    </Grid>
+</Window>
