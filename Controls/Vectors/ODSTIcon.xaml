@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="PresentationODST.Controls.Vectors.ODSTIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PresentationODST.Controls.Vectors"
+             mc:Ignorable="d" 
+             Width="256" Height="256">
+    <Grid Background="#FF212121">
+        <Path Data="M168.74161,0 L171.41267,0.52468204 C220.73747,10.595716 256,37.339627 256,68.748464 256,86.266248 245.03098,102.33292 226.77103,114.86519 L225.63638,115.62526 226,115.78079 225.86621,116.3805 C215.58327,159.84485 175.66991,192.24846 128.00002,192.24846 80.330093,192.24846 40.416744,159.84485 30.133804,116.38051 L30,115.78079 30.363617,115.62526 29.228977,114.86519 C10.969023,102.33292 0,86.266248 0,68.748464 0,36.841073 36.390854,9.747879 86.946671,0.057759285 L87.258484,0.00042033195 90,12.748464 166,12.748464 z" Fill="#FF3E4A6A" HorizontalAlignment="Center" Height="192.248" Margin="0,33.752,0,30" Stretch="Fill" VerticalAlignment="Center" Width="256"/>
+        <Path Data="M89.390004,0 C128.22252,0 161.88529,12.727258 178.45006,31.323036 L178.78002,31.704824 178.49117,32.273617 C161.73307,63.608612 128.1218,85.000008 89.390019,85.000008 50.658208,85.000008 17.046947,63.608612 0.28885746,32.273624 L0,31.704813 0.32994556,31.323036 C16.894719,12.727258 50.557485,0 89.390004,0 z" Fill="#FF3A445F" HorizontalAlignment="Center" Height="85" Margin="38.61,0,38.61,30" Stretch="Fill" VerticalAlignment="Bottom" Width="178.78"/>
+
+    </Grid>
+</UserControl>
