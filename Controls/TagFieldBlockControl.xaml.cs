@@ -38,44 +38,139 @@ namespace PresentationODST.Controls
 
                 for (int i = 0; i < value.Elements.Count; i++)
                 {
-                    if (!value.Elements[i].ElementHeaderText.Contains(i + ".") && Properties.Settings.Default.ExtraIndices)
-                        BlockListComboBox.Items.Add(i + ". " + value.Elements[i].ElementHeaderText);
-                    else
-                        BlockListComboBox.Items.Add(value.Elements[i].ElementHeaderText);
+                    AddComboBoxElement(i);
                 }
-                // set this behind a preference setting
-                if (value.Elements.Count > 0)
-                {
-                    BlockListComboBox.SelectedIndex = 0;
-                    foreach (Bungie.Tags.TagField field in _TagField.Elements[BlockListComboBox.SelectedIndex].Fields)
-                    {
-                        ManagedBlam.Tags.AddFieldValues(ElementGrid, field);
-                    }
-                }
-                else
-                {
-                    BlockListComboBox.Items.Add("NONE"); // Delete this when adding anything
-                    BlockListComboBox.SelectedIndex = 0;
-                    return;
-                }
-
+                AddBlockItems();
+                HandleVisibility();
             }
         }
-       
 
+        private void AddComboBoxElement(int i)
+        {
+            if (!_TagField.Elements[i].ElementHeaderText.Contains(i + ".") && Properties.Settings.Default.ExtraIndices)
+                BlockListComboBox.Items.Add(i + ". " + _TagField.Elements[i].ElementHeaderText);
+            else
+                BlockListComboBox.Items.Add(_TagField.Elements[i].ElementHeaderText);
+        }
+
+        private void AddBlockItems()
+        {
+            if (_TagField.Elements.Count > 0)
+            {
+                BlockListComboBox.SelectedIndex = 0;
+                foreach (Bungie.Tags.TagField field in _TagField.Elements[BlockListComboBox.SelectedIndex].Fields)
+                {
+                    ManagedBlam.Tags.AddFieldValues(ElementGrid, field);
+                }
+            }
+            else
+            {
+                BlockListComboBox.Items.Add("NONE"); // Delete this when adding anything
+                BlockListComboBox.SelectedIndex = 0;
+                return;
+            }
+        }
+
+        private void ClearElementGrid()
+        {
+            ElementGrid.Children.Clear();
+            ElementGrid.RowDefinitions.Clear();
+        }
+
+        // Lazy method to repopulate the block. Should redo for big blocks with lots of elements
+        private void RefreshBlock()
+        {
+            AllowSelectionChanged = false;
+            ClearElementGrid();
+            BlockListComboBox.Items.Clear();
+            TagField = _TagField;
+            AllowSelectionChanged = true;
+            HandleVisibility();
+        }
+
+        private void HandleVisibility()
+        {
+            if (_TagField.Elements.Count == _TagField.MaximumElementCount)
+            {
+                AddButton.IsEnabled = false;
+                InsertButton.IsEnabled = false;
+                DuplicateButton.IsEnabled = false;
+                return;
+            }
+            if (_TagField.Elements.Count > 0)
+            {
+                InsertButton.IsEnabled = true;
+                DuplicateButton.IsEnabled = true;
+            }
+            else
+            {
+                AddButton.IsEnabled = true;
+            }
+        }
+
+        private bool AllowSelectionChanged = true;
         private void BlockListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded) return;
+            if (!AllowSelectionChanged) return;
+            if (BlockListComboBox.Items.Count == 0) return;
             if (BlockListComboBox.Items[0].ToString() == "NONE") return;
-            // Stupid hack
-            ElementGrid.Children.Clear();
-            ElementGrid.RowDefinitions.Clear();
+            // Stupid hacks
+            ClearElementGrid();
             foreach (Bungie.Tags.TagField field in _TagField.Elements[BlockListComboBox.SelectedIndex].Fields)
             {
                 ManagedBlam.Tags.AddFieldValues(ElementGrid, field);
             }
         }
 
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_TagField.Elements.Count == _TagField.MaximumElementCount) return;
+            _TagField.AddElement();
+            RefreshBlock();
+            BlockListComboBox.SelectedIndex = BlockListComboBox.Items.Count - 1;
+        }
 
+        private void InsertButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_TagField.Elements.Count == _TagField.MaximumElementCount) return;
+            if (_TagField.Elements.Count <= 0) return;
+            int Index = BlockListComboBox.SelectedIndex;
+            _TagField.InsertElement(Index);
+            RefreshBlock();
+            BlockListComboBox.SelectedIndex = Index;
+        }
+
+        private void DuplicateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_TagField.Elements.Count == _TagField.MaximumElementCount) return;
+            if (_TagField.Elements.Count <= 0) return;
+            int CurrentIndex = BlockListComboBox.SelectedIndex;
+            _TagField.DuplicateElement(CurrentIndex);
+            RefreshBlock();
+            BlockListComboBox.SelectedIndex = CurrentIndex + 1;
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_TagField.Elements.Count <= 0) return;
+            if (BlockListComboBox.Items[0].ToString() == "NONE") return;
+            int CurrentIndex = BlockListComboBox.SelectedIndex;
+            _TagField.RemoveElement(CurrentIndex);
+            RefreshBlock();
+            if (_TagField.Elements.Count <= 0) return; // Yes we do need this twice this is not an erroneous duplicate
+            BlockListComboBox.SelectedIndex = CurrentIndex - 1;
+        }
+
+        private void DeleteAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (BlockListComboBox.Items[0].ToString() == "NONE") return;
+            _TagField.RemoveAllElements();
+            ClearElementGrid();
+            BlockListComboBox.Items.Clear();
+            BlockListComboBox.Items.Add("NONE"); // Delete this when adding anything
+            BlockListComboBox.SelectedIndex = 0;
+            HandleVisibility();
+        }
     }
 }

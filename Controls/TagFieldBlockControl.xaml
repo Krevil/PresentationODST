@@ -11,8 +11,13 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="500"/> <!-- Change to be smaller? Or larger -->
-            <ColumnDefinition/>
+            <ColumnDefinition Width="50"/> <!-- Change to be smaller? Or larger -->
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="65"/>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -31,5 +36,10 @@
             </Grid.ColumnDefinitions>
             <Grid x:Name="ElementGrid" Grid.Column="1"/>
         </Grid>
+        <Button Name="AddButton" Content="Add" Grid.Column="5" Margin="-1,0,1,0" Click="AddButton_Click"/>
+        <Button Name="InsertButton" Content="Insert" Grid.Column="6" Click="InsertButton_Click"/>
+        <Button Name="DuplicateButton" Content="Duplicate" Grid.Column="7" Margin="1,0,-1,0" Click="DuplicateButton_Click"/>
+        <Button Name="DeleteButton" Content="Delete" Grid.Column="8" Margin="2,0,-2,0" Click="DeleteButton_Click"/>
+        <Button Name="DeleteAllButton" Content="Delete all" Grid.Column="9" Margin="3,0,-3,0" Click="DeleteAllButton_Click"/>
     </Grid>
 </UserControl>
