@@ -38,6 +38,7 @@ namespace PresentationODST.Controls
                 ValueTextBox.Text = value.GetStringData();
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
+                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;

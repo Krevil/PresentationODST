@@ -45,6 +45,7 @@ namespace PresentationODST.Controls
                 ValueComboBox.SelectedIndex = value.Value + 1; // I do not like this one bit
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
+                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;

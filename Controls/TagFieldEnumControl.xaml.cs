@@ -37,13 +37,15 @@ namespace PresentationODST.Controls
                 _TagField = value;
                 foreach (Bungie.Tags.TagValueEnumItem EnumItem in value.Items)
                 {
-                    ValueComboBox.Items.Add(EnumItem.EnumName);
-                    //ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
-                    // Preference setting should change whether to display the enumindex
+                    if (!Properties.Settings.Default.ExtraIndices) 
+                        ValueComboBox.Items.Add(EnumItem.EnumName);
+                    else
+                        ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
                 }
                 ValueComboBox.SelectedIndex = value.Value;
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
+                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;

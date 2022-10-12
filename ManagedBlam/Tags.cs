@@ -18,8 +18,9 @@ namespace PresentationODST.ManagedBlam
         {
             string[] OpenPath = Path.GetTagsRelativePath(filename).Split('.');
             Bungie.Tags.TagPath OpenTagPath = Bungie.Tags.TagPath.FromPathAndExtension(OpenPath[0], OpenPath[1]);
+            if (!System.IO.File.Exists(filename)) return;
             LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
-            Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile(Bungie.Tags.TagPath.FromPathAndExtension(OpenPath[0], OpenPath[1]));
+            Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile(OpenTagPath);
             LayoutDocument TagTab = new LayoutDocument
             {
                 Title = String.Join(".", OpenPath),

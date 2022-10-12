@@ -37,6 +37,7 @@ namespace PresentationODST.Controls
                 _TagField = value;
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
+                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;
@@ -48,8 +49,12 @@ namespace PresentationODST.Controls
 
         private void ValidateValueText()
         {
-            ValueTextBox.Text = TagField.Reference.ReferencePointsSomewhere() ? TagField.Reference.Path.RelativePathWithExtension : "";
-            ValueTextBox.Foreground = TagField.Reference.ReferencePointsToValidTagFile() ? Utilities.WPF.BlackBrush : Utilities.WPF.RedBrush;
+            bool PointsSomewhere = _TagField.Reference.ReferencePointsSomewhere();
+            bool ValidFile = _TagField.Reference.ReferencePointsToValidTagFile();
+            ValueTextBox.Text = PointsSomewhere ? TagField.Reference.Path.RelativePathWithExtension : "";
+            ValueTextBox.Foreground = ValidFile ? Utilities.WPF.BlackBrush : Utilities.WPF.RedBrush;
+            OpenTagButton.IsEnabled = ValidFile;
+            ClearTagButton.IsEnabled = PointsSomewhere;
         }
 
         // future me please write some code to handle this it will not be that hard I promise

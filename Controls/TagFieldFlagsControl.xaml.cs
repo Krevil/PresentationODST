@@ -47,6 +47,7 @@ namespace PresentationODST.Controls
                 }
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
+                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;
@@ -69,6 +70,11 @@ namespace PresentationODST.Controls
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             _TagField.SetBit(((CheckBox)sender).Content.ToString(), (bool)((CheckBox)sender).IsChecked);
+        }
+
+        private void ValueListBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

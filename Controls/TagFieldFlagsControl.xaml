@@ -21,7 +21,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
         <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}"/>
-        <ListBox x:Name="ValueListBox" Grid.Column="2" BorderBrush="Black" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="#FFE0E0E0">
+        <ListBox x:Name="ValueListBox" Grid.Column="2" BorderBrush="Black" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="#FFE0E0E0" PreviewMouseWheel="ValueListBox_PreviewMouseWheel">
 
         </ListBox>
         <TextBlock x:Name="TypeTextBlock" Grid.Column="3" Background="{x:Null}"/>

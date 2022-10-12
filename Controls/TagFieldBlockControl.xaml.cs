@@ -38,7 +38,7 @@ namespace PresentationODST.Controls
 
                 for (int i = 0; i < value.Elements.Count; i++)
                 {
-                    if (!value.Elements[i].ElementHeaderText.Contains(i + "."))
+                    if (!value.Elements[i].ElementHeaderText.Contains(i + ".") && Properties.Settings.Default.ExtraIndices)
                         BlockListComboBox.Items.Add(i + ". " + value.Elements[i].ElementHeaderText);
                     else
                         BlockListComboBox.Items.Add(value.Elements[i].ElementHeaderText);
