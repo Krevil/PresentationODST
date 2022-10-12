@@ -15,18 +15,18 @@ using System.Windows.Shapes;
 namespace PresentationODST.Controls
 {
     /// <summary>
-    /// Interaction logic for TagFieldEnumControl.xaml
+    /// Interaction logic for TagFieldFlagsControl.xaml
     /// </summary>
-    public partial class TagFieldEnumControl : UserControl
+    public partial class TagFieldFlagsControl : UserControl
     {
-        public TagFieldEnumControl()
+        public TagFieldFlagsControl()
         {
             InitializeComponent();
             DataContext = this;
         }
 
-        private Bungie.Tags.TagFieldEnum _TagField;
-        public Bungie.Tags.TagFieldEnum TagField
+        private Bungie.Tags.TagFieldFlags _TagField;
+        public Bungie.Tags.TagFieldFlags TagField
         {
             get
             {
@@ -35,13 +35,16 @@ namespace PresentationODST.Controls
             set
             {
                 _TagField = value;
-                foreach (Bungie.Tags.TagValueEnumItem EnumItem in value.Items)
+                foreach (Bungie.Tags.TagValueFlagItem flag in _TagField.Items)
                 {
-                    ValueComboBox.Items.Add(EnumItem.EnumName);
-                    //ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
-                    // Preference setting should change whether to display the enumindex
+                    CheckBox box = new CheckBox
+                    {
+                        Content = flag.FlagName,
+                        IsChecked = _TagField.TestBit(flag.FlagName)
+                    };
+                    box.Click += new RoutedEventHandler(CheckBox_Click);
+                    ValueListBox.Items.Add(box);
                 }
-                ValueComboBox.SelectedIndex = value.Value;
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
                 if (value.Description.Length > 0)
@@ -51,11 +54,21 @@ namespace PresentationODST.Controls
                 }
             }
         }
-
-        private void ValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /*
+        private void ValueListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded) return;
-            _TagField.Value = ValueComboBox.SelectedIndex;
+
+            foreach (CheckBox box in ValueListBox.Items)
+            {
+                _TagField.SetBit(box.Content.ToString(), (bool)box.IsChecked);
+            }
+        }
+        */
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            _TagField.SetBit(((CheckBox)sender).Content.ToString(), (bool)((CheckBox)sender).IsChecked);
         }
     }
 }

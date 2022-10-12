@@ -14,6 +14,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using Microsoft.Win32;
+using Xceed.Wpf.AvalonDock.Layout;
+using PresentationODST.Controls;
+using PresentationODST.Controls.LayoutDocuments;
+using PresentationODST.Utilities;
+
 
 namespace PresentationODST
 {
@@ -22,7 +27,9 @@ namespace PresentationODST
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPane TagTabs;
+        public static MainWindow Main_Window;
+        public static int NewTagCount = 1;
+        public static LayoutDocumentPane TagTabs;
         public static bool _BlamInitialized = false;
         public string BlamInitialized
         {
@@ -40,6 +47,7 @@ namespace PresentationODST
         {
             InitializeComponent();
             DataContext = this;
+            Main_Window = this;
             TagTabs = TagDocuments;
             if (!InitializeProject())
             {
@@ -48,7 +56,7 @@ namespace PresentationODST
             }
         }
 
-        private bool InitializeProject()
+        public bool InitializeProject()
         {
             if (Properties.Settings.Default.ODSTEKPath.Length <= 0) return false;
 
@@ -76,27 +84,16 @@ namespace PresentationODST
             }
         }
 
-        private void ODSTEKPath_Click(object sender, RoutedEventArgs e)
+        private void Preferences_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog fbg = new System.Windows.Forms.FolderBrowserDialog();
-            if (Properties.Settings.Default.ODSTEKPath.Length > 0)
+            LayoutDocument PreferencesTab = new LayoutDocument
             {
-                try
-                {
-                    fbg.SelectedPath = Properties.Settings.Default.ODSTEKPath;
-                    fbg.RootFolder = Environment.SpecialFolder.MyComputer;
-                }
-                catch
-                {
-
-                }
-            }
-            if (fbg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Properties.Settings.Default.ODSTEKPath = fbg.SelectedPath;
-                Properties.Settings.Default.Save();
-                InitializeProject();
-            }
+                Title = "Preferences",
+                Content = new Preferences()
+            };
+            LayoutDocumentPane ldp = TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+            ldp.Children.Add(PreferencesTab);
+            ldp.SelectedContentIndex = ldp.IndexOfChild(PreferencesTab);
         }
 
         private void CommandBinding_New_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -104,42 +101,46 @@ namespace PresentationODST
             GroupSelector = new Dialogs.TagGroupSelector();
             if (GroupSelector.ShowDialog() == true)
             {
+                LayoutDocumentPane ldp = TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
                 Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
                 Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)GroupSelector.TagListBox.SelectedItem;
-                NewTag.New(Bungie.Tags.TagPath.FromPathAndType("tag" + TagDocuments.Children.Count, SelectedItem.Extension));
-                Xceed.Wpf.AvalonDock.Layout.LayoutDocument TagTab = new Xceed.Wpf.AvalonDock.Layout.LayoutDocument
+                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + NewTagCount, SelectedItem.Extension);
+                NewTag.New(NewPath);
+                LayoutDocument TagTab = new LayoutDocument
                 {
-                    Title = "tag" + TagDocuments.Children.Count + "." + SelectedItem.Extension,
-                    Content = new Controls.TagView()
+                    Title = "tag" + NewTagCount + "." + SelectedItem.Extension,
+                    Content = new TagView()
                 };
-                Controls.TagView NewTagView = (Controls.TagView)TagTab.Content;
+                TagView NewTagView = (TagView)TagTab.Content;
                 NewTagView.TagFile = NewTag;
                 foreach (Bungie.Tags.TagField field in NewTag.Fields)
                 {
                     ManagedBlam.Tags.AddFieldValues(NewTagView.TagGrid, field);
                 }
-                TagDocuments.Children.Add(TagTab);
-                TagDocuments.SelectedContentIndex = TagDocuments.Children.IndexOf(TagTab);
+                ldp.Children.Add(TagTab);
+                ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
+                NewTagCount++;
             }
         }
 
         private void CommandBinding_Save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Controls.TagView SaveTagView = (Controls.TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
+            if (TagDocuments.Children[TagDocuments.SelectedContentIndex].Content.GetType() != typeof(TagView)) return;
+            TagView SaveTagView = (TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
             SaveTagView.Save();
         }
 
         private void SaveFileAs_Click(object sender, RoutedEventArgs e)
         {
+            if (TagDocuments.Children[TagDocuments.SelectedContentIndex].Content.GetType() != typeof(TagView)) return;
             SaveFileDialog sfd = new SaveFileDialog
             {
-                InitialDirectory = Properties.Settings.Default.ODSTEKPath + @"\tags"
+                InitialDirectory = Utilities.Path.ODSTEKTagsPath
             };
             if (sfd.ShowDialog() == true)
             {
                 string[] SavePath = Utilities.Path.GetTagsRelativePath(sfd.FileName).Split('.');
-                //Debug.WriteLine(SavePath[0] + " " + SavePath[1]);
-                Controls.TagView SaveAsTagView = (Controls.TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
+                TagView SaveAsTagView = (TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
                 SaveAsTagView.SaveAs(Bungie.Tags.TagPath.FromPathAndExtension(SavePath[0], SavePath[1]));
             }
         }
@@ -147,10 +148,6 @@ namespace PresentationODST
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        }
-
-        private void LayoutRoot_ElementRemoved(object sender, Xceed.Wpf.AvalonDock.Layout.LayoutElementEventArgs e)
-        {
         }
     }
 }

@@ -23,6 +23,7 @@ namespace PresentationODST.Controls
         {
             InitializeComponent();
             DataContext = this;
+            
         }
 
         private Bungie.Tags.TagFieldElement _TagField;

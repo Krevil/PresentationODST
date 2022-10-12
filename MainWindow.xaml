@@ -93,18 +93,23 @@
                 <MenuItem Header="Exit" x:Name="Exit" BorderThickness="0" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="Edit" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
-                <MenuItem Header="ODSTEK Path" Click="ODSTEKPath_Click"/>
+                <MenuItem Header="Preferences" Click="Preferences_Click"/>
             </MenuItem>
         </Menu>
-        <avalon:DockingManager x:Name="TagDock" Grid.Row="1" Grid.ColumnSpan="3" Background="{x:Null}">
-            <avalon:LayoutRoot ElementRemoved="LayoutRoot_ElementRemoved">
-                <avalon:LayoutPanel>
-                    <avalon:LayoutDocumentPaneGroup>
-                        <avalon:LayoutDocumentPane x:Name="TagDocuments"/>
-                    </avalon:LayoutDocumentPaneGroup>
-                </avalon:LayoutPanel>
-            </avalon:LayoutRoot>
-        </avalon:DockingManager>
+        <Grid Grid.Row="1" Grid.ColumnSpan="3">
+            <avalon:DockingManager x:Name="TagDock" Background="#FFD8D8D8">
+                <avalon:LayoutRoot>
+                    <avalon:LayoutRoot.LeftSide>
+                        <avalon:LayoutAnchorSide/>
+                    </avalon:LayoutRoot.LeftSide>
+                    <avalon:LayoutPanel>
+                        <avalon:LayoutDocumentPaneGroup>
+                            <avalon:LayoutDocumentPane x:Name="TagDocuments"/>
+                        </avalon:LayoutDocumentPaneGroup>
+                    </avalon:LayoutPanel>
+                </avalon:LayoutRoot>
+            </avalon:DockingManager>
+        </Grid>
         <Rectangle x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="3">
             <Rectangle.Fill>
                 <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">

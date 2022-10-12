@@ -34,5 +34,53 @@ namespace PresentationODST.Properties {
                 this["ODSTEKPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExpertMode {
+            get {
+                return ((bool)(this["ExpertMode"]));
+            }
+            set {
+                this["ExpertMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExtraIndices {
+            get {
+                return ((bool)(this["ExtraIndices"]));
+            }
+            set {
+                this["ExtraIndices"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FieldTypes {
+            get {
+                return ((bool)(this["FieldTypes"]));
+            }
+            set {
+                this["FieldTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EasterEggs {
+            get {
+                return ((bool)(this["EasterEggs"]));
+            }
+            set {
+                this["EasterEggs"] = value;
+            }
+        }
     }
 }

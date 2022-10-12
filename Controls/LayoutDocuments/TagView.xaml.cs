@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PresentationODST.Controls
+namespace PresentationODST.Controls.LayoutDocuments
 {
     /// <summary>
     /// Interaction logic for TagView.xaml
@@ -25,8 +25,11 @@ namespace PresentationODST.Controls
         {
             InitializeComponent();
             DataContext = this;
-            //Random rand = new Random();
-            //TagGrid.Background = new SolidColorBrush(Color.FromArgb(255, (byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255))); // Enable this with a preference setting for fun
+            if (Properties.Settings.Default.EasterEggs)
+            {
+                Random rand = new Random();
+                TagGrid.Background = new SolidColorBrush(Color.FromArgb(255, (byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255)));
+            }
         }
 
         public void Save()

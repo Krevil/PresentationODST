@@ -21,10 +21,7 @@ namespace PresentationODST.Controls
         public TagFieldBlockControl()
         {
             InitializeComponent();
-            
         }
-
-
         
         private Bungie.Tags.TagFieldBlock _TagField;
         public Bungie.Tags.TagFieldBlock TagField

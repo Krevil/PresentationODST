@@ -17,16 +17,16 @@ namespace PresentationODST.Controls
     /// <summary>
     /// Interaction logic for TagFieldEnumControl.xaml
     /// </summary>
-    public partial class TagFieldEnumControl : UserControl
+    public partial class TagFieldBlockIndexControl : UserControl
     {
-        public TagFieldEnumControl()
+        public TagFieldBlockIndexControl()
         {
             InitializeComponent();
             DataContext = this;
         }
 
-        private Bungie.Tags.TagFieldEnum _TagField;
-        public Bungie.Tags.TagFieldEnum TagField
+        private Bungie.Tags.TagFieldBlockIndex _TagField;
+        public Bungie.Tags.TagFieldBlockIndex TagField
         {
             get
             {
@@ -35,13 +35,14 @@ namespace PresentationODST.Controls
             set
             {
                 _TagField = value;
-                foreach (Bungie.Tags.TagValueEnumItem EnumItem in value.Items)
+                foreach (Bungie.Tags.TagFieldBlockIndex.TagFieldBlockIndexItem IndexItem in value.Items)
                 {
-                    ValueComboBox.Items.Add(EnumItem.EnumName);
+                    ValueComboBox.Items.Add(IndexItem.BlockIndexName);
+
                     //ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
                     // Preference setting should change whether to display the enumindex
                 }
-                ValueComboBox.SelectedIndex = value.Value;
+                ValueComboBox.SelectedIndex = value.Value + 1; // I do not like this one bit
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
                 if (value.Description.Length > 0)
@@ -55,7 +56,7 @@ namespace PresentationODST.Controls
         private void ValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded) return;
-            _TagField.Value = ValueComboBox.SelectedIndex;
+            _TagField.Value = ValueComboBox.SelectedIndex - 1;
         }
     }
 }

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PresentationODST.Dialogs"
              mc:Ignorable="d" 
-             Height="400" Title="New Tag" Width="400" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Topmost="True">
+             Height="400" Title="New Tag" Width="400" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Window.CommandBindings>
         <CommandBinding Command="Close" Executed="Command_Close_Binding_Executed"/>
     </Window.CommandBindings>
