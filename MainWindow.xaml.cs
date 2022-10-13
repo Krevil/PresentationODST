@@ -149,5 +149,13 @@ namespace PresentationODST
         {
             Application.Current.Shutdown();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Uri iconUri = new Uri("pack://application:,,,/PresentationODST.ico", UriKind.RelativeOrAbsolute); //make sure your path is correct, and the icon set as Resource
+            this.Icon = BitmapFrame.Create(iconUri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+
+            //etc.
+        }
     }
 }

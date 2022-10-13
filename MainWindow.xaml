@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:PresentationODST" 
         xmlns:cv="clr-namespace:PresentationODST.Controls.Vectors"
         mc:Ignorable="d"
-        Title="Presentation ODST">
+        Title="Presentation ODST" Loaded="Window_Loaded">
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="CommandBinding_Open_Executed"/>
         <CommandBinding Command="New" Executed="CommandBinding_New_Executed"/>
