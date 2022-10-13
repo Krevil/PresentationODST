@@ -83,7 +83,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
-            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Menu Height="20" Grid.ColumnSpan="3" Grid.Row="0" Background="#FF292929" >
             <MenuItem Header="File" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
@@ -112,14 +111,5 @@
                 </avalon:LayoutRoot>
             </avalon:DockingManager>
         </Grid>
-        <Rectangle x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="3">
-            <Rectangle.Fill>
-                <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                    <GradientStop Color="#FF3587FF" Offset="0"/>
-                    <GradientStop Color="#FF2371E2" Offset="0.719"/>
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-        <TextBlock x:Name="StatusBarText" Text="Disconnected" Grid.ColumnSpan="3" Grid.Row="2" Foreground="White" Margin="4,0,-4,0"/>
     </Grid>
 </Window>

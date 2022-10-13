@@ -33,7 +33,34 @@ namespace PresentationODST.ManagedBlam
                 AddFieldValues(NewTagView.TagGrid, field);
             }
             ldp.Children.Add(TagTab);
-            ldp.SelectedContentIndex = MainWindow.TagTabs.Children.IndexOf(TagTab);
+            ldp.SelectedContentIndex = ldp.Children.IndexOf(TagTab);
+        }
+
+        public static void NewTag()
+        {
+            MainWindow.GroupSelector = new Dialogs.TagGroupSelector();
+            if (MainWindow.GroupSelector.ShowDialog() == true)
+            {
+                LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+                Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
+                Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)MainWindow.GroupSelector.TagListBox.SelectedItem;
+                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + MainWindow.NewTagCount, SelectedItem.Extension);
+                NewTag.New(NewPath);
+                LayoutDocument TagTab = new LayoutDocument
+                {
+                    Title = "tag" + MainWindow.NewTagCount + "." + SelectedItem.Extension,
+                    Content = new TagView()
+                };
+                TagView NewTagView = (TagView)TagTab.Content;
+                NewTagView.TagFile = NewTag;
+                foreach (Bungie.Tags.TagField field in NewTag.Fields)
+                {
+                    ManagedBlam.Tags.AddFieldValues(NewTagView.TagGrid, field);
+                }
+                ldp.Children.Add(TagTab);
+                ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
+                MainWindow.NewTagCount++;
+            }
         }
 
         // Migrate each case's operations to new methods

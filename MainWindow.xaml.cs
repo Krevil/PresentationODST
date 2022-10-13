@@ -29,26 +29,12 @@ namespace PresentationODST
     {
         public static MainWindow Main_Window;
         public static int NewTagCount = 1;
-        public static LayoutDocumentPane TagTabs;
-        public static bool _BlamInitialized = false;
-        public string BlamInitialized
-        {
-            get
-            {
-                if (Bungie.ManagedBlamSystem.IsInitialized)
-                    return "Ready";
-                else
-                    return "Disconnected";
-            }
-        }
         public static Dialogs.TagGroupSelector GroupSelector;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = this;
             Main_Window = this;
-            TagTabs = TagDocuments;
             if (!InitializeProject())
             {
                 MessageBox.Show("Please navigate to your ODSTEK install folder.", "Startup", MessageBoxButton.OK);
@@ -58,11 +44,13 @@ namespace PresentationODST
 
         public bool InitializeProject()
         {
-            if (Properties.Settings.Default.ODSTEKPath.Length <= 0) return false;
-
-            Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
-            StatusBarText.Text = BlamInitialized;
-            return true;
+            if (Properties.Settings.Default.ODSTEKPath.Length <= 0)
+                return false;
+            else
+            {
+                Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
+                return true;
+            }
         }
 
         private void CommandBinding_Open_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -98,29 +86,7 @@ namespace PresentationODST
 
         private void CommandBinding_New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            GroupSelector = new Dialogs.TagGroupSelector();
-            if (GroupSelector.ShowDialog() == true)
-            {
-                LayoutDocumentPane ldp = TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
-                Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
-                Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)GroupSelector.TagListBox.SelectedItem;
-                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + NewTagCount, SelectedItem.Extension);
-                NewTag.New(NewPath);
-                LayoutDocument TagTab = new LayoutDocument
-                {
-                    Title = "tag" + NewTagCount + "." + SelectedItem.Extension,
-                    Content = new TagView()
-                };
-                TagView NewTagView = (TagView)TagTab.Content;
-                NewTagView.TagFile = NewTag;
-                foreach (Bungie.Tags.TagField field in NewTag.Fields)
-                {
-                    ManagedBlam.Tags.AddFieldValues(NewTagView.TagGrid, field);
-                }
-                ldp.Children.Add(TagTab);
-                ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
-                NewTagCount++;
-            }
+            ManagedBlam.Tags.NewTag();
         }
 
         private void CommandBinding_Save_Executed(object sender, ExecutedRoutedEventArgs e)
