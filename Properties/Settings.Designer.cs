@@ -82,5 +82,17 @@ namespace PresentationODST.Properties {
                 this["EasterEggs"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public double TagExplorerWidth {
+            get {
+                return ((double)(this["TagExplorerWidth"]));
+            }
+            set {
+                this["TagExplorerWidth"] = value;
+            }
+        }
     }
 }

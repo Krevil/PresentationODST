@@ -7,6 +7,7 @@
         xmlns:avalon="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:PresentationODST" 
         xmlns:cv="clr-namespace:PresentationODST.Controls.Vectors"
+        xmlns:p="clr-namespace:PresentationODST.Properties"
         mc:Ignorable="d"
         Title="Presentation ODST" Loaded="Window_Loaded">
     <Window.CommandBindings>
@@ -73,10 +74,40 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <ControlTemplate x:Key="TagExplorerButtonControlTemplate" TargetType="{x:Type Button}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <!-- Set RecognizesAccessKey to false so that we can use underscores without any hassle -->
+                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#FFBEE6FD"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#FFC4E5F6"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                </Trigger>
+                <!-- Not wanted, disabled items here are just folders
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                    <Setter Property="Foreground" Value="#FF838383"/>
+                </Trigger>
+                -->
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="{Binding Source={x:Static p:Settings.Default}, Path=TagExplorerWidth, Mode=OneTime}"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -84,7 +115,7 @@
             <RowDefinition Height="20"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <GridSplitter Grid.Column="1" Grid.Row="1" Width="5" ResizeBehavior="PreviousAndNext"/>
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="5" ResizeBehavior="PreviousAndNext" DragCompleted="GridSplitter_DragCompleted"/>
         <Menu Height="20" Grid.ColumnSpan="4" Grid.Row="0" Background="#FF292929" >
             <MenuItem Header="File" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
                 <MenuItem Command="New" Header="New..." x:Name="NewFile" BorderThickness="0" />
@@ -100,28 +131,18 @@
         <Grid  Grid.Row="1" Grid.Column="0">
             <TreeView x:Name="TagExplorer" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagFolder}">
-                        <TreeViewItem Header="{Binding Name}"/>
-                    </HierarchicalDataTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagFolderItem}">
-                        <TreeViewItem Header="{Binding Name}"/>
+                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagDirectoryItem}">
+                        <Button Content="{Binding Name}" Background="{x:Null}" BorderBrush="{x:Null}" Click="TagExplorerButton_Click" MouseDoubleClick="TagExplorerButton_DoubleClick" IsEnabled="{Binding IsFile}" Template="{DynamicResource TagExplorerButtonControlTemplate}"/>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
+                <!--
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_PreviewMouseRightButtonDown"/>
                     </Style>
                 </TreeView.ItemContainerStyle>
+                -->
             </TreeView>
-            <!--
-            <ListBox x:Name="DirList">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            -->
         </Grid>
         <Grid Grid.Row="1" Grid.Column="2" Background="#FFB6B6B6">
             <cv:ODSTIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5">

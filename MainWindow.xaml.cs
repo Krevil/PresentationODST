@@ -136,22 +136,25 @@ namespace PresentationODST
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Uri iconUri = new Uri("pack://application:,,,/PresentationODST.ico", UriKind.RelativeOrAbsolute); //make sure your path is correct, and the icon set as Resource
-            this.Icon = BitmapFrame.Create(iconUri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-
-            //etc.
+            Uri iconUri = new Uri("pack://application:,,,/PresentationODST.ico", UriKind.RelativeOrAbsolute);
+            Icon = BitmapFrame.Create(iconUri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
         }
 
-        private void TreeViewItem_PreviewMouseRightButtonDown(object sender, MouseEventArgs e)
+        private void TagExplorerButton_DoubleClick(object sender, RoutedEventArgs e)
         {
-            TreeViewItem item = sender as TreeViewItem;
-            if (item != null)
-            {
-                item.Focus();
-                Debug.WriteLine(((TagFolder)item.DataContext).FullPath);
-                //ManagedBlam.Tags.OpenTag(((TagFolder)item.DataContext).FullPath);
-                e.Handled = true;
-            }
+            ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((Button)sender).DataContext).FullPath);
+            //I feel like there must be a better way than doing all this casting?
+        }
+
+        private void TagExplorerButton_Click(object sender, RoutedEventArgs e)
+        {
+            //((TreeViewItem)((Button)sender)).IsSelected = true;
+        }
+
+        private void GridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            Properties.Settings.Default.TagExplorerWidth = MainGrid.ColumnDefinitions[0].Width.Value;
+            Properties.Settings.Default.Save();
         }
     }
 
@@ -161,36 +164,38 @@ namespace PresentationODST
     {
         public TagDirectory(string dir)
         {
-            TagDirectories.Add(new TagFolder(dir));
+            TagDirectories.Add(new TagDirectoryItem(dir));
         }
 
-        public ObservableCollection<TagFolder> TagDirectories { get; set; } = new ObservableCollection<TagFolder>();
+        public ObservableCollection<TagDirectoryItem> TagDirectories { get; set; } = new ObservableCollection<TagDirectoryItem>();
     }
 
-    public interface IDirectoryItem : INotifyPropertyChanged
+    public class TagDirectoryItem : INotifyPropertyChanged
     {
-        string Name { get; set; }
-    }
-
-    public class TagFolder : IDirectoryItem
-    {
-        public TagFolder(string fullpath)
+        public TagDirectoryItem(string fullpath)
         {
             FullPath = fullpath;
-            Name = new DirectoryInfo(fullpath).Name;
-            foreach (string file in Directory.GetFiles(FullPath))
+            DirectoryInfo DirInfo = new DirectoryInfo(fullpath);
+            _Name = DirInfo.Name;
+            IsFile = !DirInfo.Attributes.HasFlag(FileAttributes.Directory);
+
+            if (!IsFile)
             {
-                SubFolders.Add(new TagFolderItem(file, fullpath));
-            }
-            foreach (string folder in Directory.GetDirectories(FullPath))
-            {
-                SubFolders.Add(new TagFolder(folder));
+                foreach (string file in Directory.GetFiles(FullPath))
+                {
+                    SubFolders.Add(new TagDirectoryItem(file));
+                }
+                foreach (string folder in Directory.GetDirectories(FullPath))
+                {
+                    SubFolders.Add(new TagDirectoryItem(folder));
+                }
             }
         }
 
+        public bool IsFile { get; set; }
         public string FullPath { get; set; }
 
-        public ObservableCollection<IDirectoryItem> SubFolders { get; set; } = new ObservableCollection<IDirectoryItem>();
+        public ObservableCollection<TagDirectoryItem> SubFolders { get; set; } = new ObservableCollection<TagDirectoryItem>();
 
         private string _Name;
         public string Name
@@ -219,43 +224,5 @@ namespace PresentationODST
             return _Name;
         }
     }
-
-    public class TagFolderItem : IDirectoryItem
-    {
-        public TagFolderItem(string itemname, string fullpath)
-        {
-            Name = new DirectoryInfo(itemname).Name;
-            FullPath = fullpath;
-        }
-
-        public string FullPath { get; set; }
-        private string _Name;
-        public string Name
-        {
-            get
-            {
-                return _Name;
-            }
-            set
-            {
-                _Name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string property)
-        {
-            if (PropertyChanged == null) return;
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(property));
-        }
-
-        public override string ToString()
-        {
-            return _Name;
-        }
-    }
-
     #endregion
 }
