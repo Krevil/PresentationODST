@@ -1,10 +1,11 @@
-﻿<UserControl x:Class="PresentationODST.Controls.TagFieldStringIDControl"
+﻿<UserControl x:Class="PresentationODST.Controls.TagFieldControls.TagFieldBlockIndexControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PresentationODST.Controls"
-             mc:Ignorable="d" >
+             mc:Ignorable="d" 
+             d:DesignHeight="20">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
@@ -21,7 +22,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
         <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}"/>
-        <TextBox x:Name="ValueTextBox" Grid.Column="2" BorderBrush="Black" Text="" IsReadOnly="False" Background="#FFE0E0E0" TextChanged="ValueTextBox_TextChanged"/>
+        <ComboBox x:Name="ValueComboBox" Grid.Column="2" BorderBrush="Black" Background="#FFE0E0E0" SelectionChanged="ValueComboBox_SelectionChanged"/>
         <TextBlock x:Name="TypeTextBlock" Grid.Column="3" Background="{x:Null}"/>
     </Grid>
 </UserControl>

@@ -126,19 +126,19 @@
     <Compile Include="Controls\LayoutDocuments\Preferences.xaml.cs">
       <DependentUpon>Preferences.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagFieldBlockControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldBlockControl.xaml.cs">
       <DependentUpon>TagFieldBlockControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagFieldBlockIndexControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldBlockIndexControl.xaml.cs">
       <DependentUpon>TagFieldBlockIndexControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagFieldFlagsControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldFlagsControl.xaml.cs">
       <DependentUpon>TagFieldFlagsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagFieldReferenceControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldReferenceControl.xaml.cs">
       <DependentUpon>TagFieldReferenceControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagFieldStringIDControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldStringIDControl.xaml.cs">
       <DependentUpon>TagFieldStringIDControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Vectors\ODSTIcon.xaml.cs">
@@ -154,31 +154,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldBlockControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldBlockControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldBlockIndexControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldBlockIndexControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldElementControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldElementControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldEnumControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldEnumControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldFlagsControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldFlagsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldReferenceControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldReferenceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TagFieldStringIDControl.xaml">
+    <Page Include="Controls\TagFieldControls\TagFieldStringIDControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -202,10 +202,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\TagFieldElementControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldElementControl.xaml.cs">
       <DependentUpon>TagFieldElementControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagFieldEnumControl.xaml.cs">
+    <Compile Include="Controls\TagFieldControls\TagFieldEnumControl.xaml.cs">
       <DependentUpon>TagFieldEnumControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LayoutDocuments\TagView.xaml.cs">

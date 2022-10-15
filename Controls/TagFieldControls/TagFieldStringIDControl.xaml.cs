@@ -12,21 +12,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PresentationODST.Controls
+namespace PresentationODST.Controls.TagFieldControls
 {
     /// <summary>
-    /// Interaction logic for TagFieldEnumControl.xaml
+    /// Interaction logic for TagFieldStringIDControl.xaml
     /// </summary>
-    public partial class TagFieldBlockIndexControl : UserControl
+    public partial class TagFieldStringIDControl : UserControl
     {
-        public TagFieldBlockIndexControl()
+        public TagFieldStringIDControl()
         {
             InitializeComponent();
             DataContext = this;
         }
 
-        private Bungie.Tags.TagFieldBlockIndex _TagField;
-        public Bungie.Tags.TagFieldBlockIndex TagField
+        private Bungie.Tags.TagFieldElementStringID _TagField;
+        public Bungie.Tags.TagFieldElementStringID TagField
         {
             get
             {
@@ -35,14 +35,7 @@ namespace PresentationODST.Controls
             set
             {
                 _TagField = value;
-                foreach (Bungie.Tags.TagFieldBlockIndex.TagFieldBlockIndexItem IndexItem in value.Items)
-                {
-                    ValueComboBox.Items.Add(IndexItem.BlockIndexName);
-
-                    //ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
-                    // Preference setting should change whether to display the enumindex
-                }
-                ValueComboBox.SelectedIndex = value.Value + 1; // I do not like this one bit
+                ValueTextBox.Text = value.GetStringData();
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
                 TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
@@ -54,10 +47,15 @@ namespace PresentationODST.Controls
             }
         }
 
-        private void ValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!IsLoaded) return;
-            _TagField.Value = ValueComboBox.SelectedIndex - 1;
+            if (ValueTextBox.Text.Length > TagField.MaxLength)
+            {
+                ValueTextBox.Foreground = Utilities.WPF.RedBrush;
+            }
+            ValueTextBox.Foreground = Utilities.WPF.BlackBrush;
+            _TagField.SetStringData(ValueTextBox.Text);
         }
     }
 }

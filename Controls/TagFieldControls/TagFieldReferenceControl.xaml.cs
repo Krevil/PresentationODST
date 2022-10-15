@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 
-namespace PresentationODST.Controls
+namespace PresentationODST.Controls.TagFieldControls
 {
     /// <summary>
     /// Interaction logic for TagFieldReferenceControl.xaml

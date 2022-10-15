@@ -12,21 +12,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PresentationODST.Controls
+namespace PresentationODST.Controls.TagFieldControls
 {
     /// <summary>
-    /// Interaction logic for TagFieldStringIDControl.xaml
+    /// Interaction logic for TagFieldEnumControl.xaml
     /// </summary>
-    public partial class TagFieldStringIDControl : UserControl
+    public partial class TagFieldEnumControl : UserControl
     {
-        public TagFieldStringIDControl()
+        public TagFieldEnumControl()
         {
             InitializeComponent();
             DataContext = this;
         }
 
-        private Bungie.Tags.TagFieldElementStringID _TagField;
-        public Bungie.Tags.TagFieldElementStringID TagField
+        private Bungie.Tags.TagFieldEnum _TagField;
+        public Bungie.Tags.TagFieldEnum TagField
         {
             get
             {
@@ -35,7 +35,14 @@ namespace PresentationODST.Controls
             set
             {
                 _TagField = value;
-                ValueTextBox.Text = value.GetStringData();
+                foreach (Bungie.Tags.TagValueEnumItem EnumItem in value.Items)
+                {
+                    if (!Properties.Settings.Default.ExtraIndices) 
+                        ValueComboBox.Items.Add(EnumItem.EnumName);
+                    else
+                        ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
+                }
+                ValueComboBox.SelectedIndex = value.Value;
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
                 TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
@@ -47,15 +54,10 @@ namespace PresentationODST.Controls
             }
         }
 
-        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded) return;
-            if (ValueTextBox.Text.Length > TagField.MaxLength)
-            {
-                ValueTextBox.Foreground = Utilities.WPF.RedBrush;
-            }
-            ValueTextBox.Foreground = Utilities.WPF.BlackBrush;
-            _TagField.SetStringData(ValueTextBox.Text);
+            _TagField.Value = ValueComboBox.SelectedIndex;
         }
     }
 }

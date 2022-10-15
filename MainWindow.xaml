@@ -76,15 +76,16 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="105"/>
-            <ColumnDefinition Width="105"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Menu Height="20" Grid.ColumnSpan="3" Grid.Row="0" Background="#FF292929" >
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="5" ResizeBehavior="PreviousAndNext"/>
+        <Menu Height="20" Grid.ColumnSpan="4" Grid.Row="0" Background="#FF292929" >
             <MenuItem Header="File" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
                 <MenuItem Command="New" Header="New..." x:Name="NewFile" BorderThickness="0" />
                 <MenuItem Command="Open" Header="Open..." x:Name="OpenFile" BorderThickness="0"/>
@@ -96,8 +97,43 @@
                 <MenuItem Header="Preferences" Click="Preferences_Click"/>
             </MenuItem>
         </Menu>
-        <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="#FFB6B6B6">
-            <cv:ODSTIcon Height="256" Width="256"/>
+        <Grid  Grid.Row="1" Grid.Column="0">
+            <TreeView x:Name="TagExplorer" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagFolder}">
+                        <TreeViewItem Header="{Binding Name}"/>
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagFolderItem}">
+                        <TreeViewItem Header="{Binding Name}"/>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_PreviewMouseRightButtonDown"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+            <!--
+            <ListBox x:Name="DirList">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            -->
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="2" Background="#FFB6B6B6">
+            <cv:ODSTIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5">
+                <cv:ODSTIcon.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </cv:ODSTIcon.RenderTransform>
+            </cv:ODSTIcon>
             <avalon:DockingManager x:Name="TagDock" Background="{x:Null}">
                 <avalon:LayoutRoot>
                     <avalon:LayoutRoot.LeftSide>

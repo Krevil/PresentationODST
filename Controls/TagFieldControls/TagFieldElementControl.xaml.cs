@@ -12,21 +12,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PresentationODST.Controls
+namespace PresentationODST.Controls.TagFieldControls
 {
     /// <summary>
-    /// Interaction logic for TagFieldEnumControl.xaml
+    /// Interaction logic for TagFieldElement.xaml
     /// </summary>
-    public partial class TagFieldEnumControl : UserControl
+    public partial class TagFieldElementControl : UserControl
     {
-        public TagFieldEnumControl()
+        public TagFieldElementControl()
         {
             InitializeComponent();
             DataContext = this;
+            
         }
 
-        private Bungie.Tags.TagFieldEnum _TagField;
-        public Bungie.Tags.TagFieldEnum TagField
+        private Bungie.Tags.TagFieldElement _TagField;
+        public Bungie.Tags.TagFieldElement TagField
         {
             get
             {
@@ -35,14 +36,7 @@ namespace PresentationODST.Controls
             set
             {
                 _TagField = value;
-                foreach (Bungie.Tags.TagValueEnumItem EnumItem in value.Items)
-                {
-                    if (!Properties.Settings.Default.ExtraIndices) 
-                        ValueComboBox.Items.Add(EnumItem.EnumName);
-                    else
-                        ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
-                }
-                ValueComboBox.SelectedIndex = value.Value;
+                ValueTextBox.Text = value.GetStringData();
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
                 TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
@@ -54,10 +48,11 @@ namespace PresentationODST.Controls
             }
         }
 
-        private void ValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!IsLoaded) return;
-            _TagField.Value = ValueComboBox.SelectedIndex;
+            if (double.TryParse(ValueTextBox.Text, out _))
+                _TagField.SetStringData(ValueTextBox.Text);
         }
     }
 }

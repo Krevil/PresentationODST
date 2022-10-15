@@ -18,7 +18,9 @@ using Xceed.Wpf.AvalonDock.Layout;
 using PresentationODST.Controls;
 using PresentationODST.Controls.LayoutDocuments;
 using PresentationODST.Utilities;
-
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace PresentationODST
 {
@@ -48,6 +50,7 @@ namespace PresentationODST
                 return false;
             else
             {
+                DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
                 Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
                 return true;
             }
@@ -93,7 +96,22 @@ namespace PresentationODST
         {
             if (TagDocuments.Children[TagDocuments.SelectedContentIndex].Content.GetType() != typeof(TagView)) return;
             TagView SaveTagView = (TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
-            SaveTagView.Save();
+            if (System.IO.File.Exists(Utilities.Path.ODSTEKTagsPath + SaveTagView.TagFile.Path.RelativePathWithExtension))
+            {
+                SaveTagView.Save();
+            }
+            else
+            {
+                SaveFileDialog sfd = new SaveFileDialog
+                {
+                    InitialDirectory = Utilities.Path.ODSTEKTagsPath
+                };
+                if (sfd.ShowDialog() == true)
+                {
+                    string[] SavePath = Utilities.Path.GetTagsRelativePath(sfd.FileName).Split('.');
+                    SaveTagView.SaveAs(Bungie.Tags.TagPath.FromPathAndExtension(SavePath[0], SavePath[1]));
+                }
+            }
         }
 
         private void SaveFileAs_Click(object sender, RoutedEventArgs e)
@@ -123,5 +141,121 @@ namespace PresentationODST
 
             //etc.
         }
+
+        private void TreeViewItem_PreviewMouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            TreeViewItem item = sender as TreeViewItem;
+            if (item != null)
+            {
+                item.Focus();
+                Debug.WriteLine(((TagFolder)item.DataContext).FullPath);
+                //ManagedBlam.Tags.OpenTag(((TagFolder)item.DataContext).FullPath);
+                e.Handled = true;
+            }
+        }
     }
+
+    #region TreeView Malarky
+
+    public class TagDirectory
+    {
+        public TagDirectory(string dir)
+        {
+            TagDirectories.Add(new TagFolder(dir));
+        }
+
+        public ObservableCollection<TagFolder> TagDirectories { get; set; } = new ObservableCollection<TagFolder>();
+    }
+
+    public interface IDirectoryItem : INotifyPropertyChanged
+    {
+        string Name { get; set; }
+    }
+
+    public class TagFolder : IDirectoryItem
+    {
+        public TagFolder(string fullpath)
+        {
+            FullPath = fullpath;
+            Name = new DirectoryInfo(fullpath).Name;
+            foreach (string file in Directory.GetFiles(FullPath))
+            {
+                SubFolders.Add(new TagFolderItem(file, fullpath));
+            }
+            foreach (string folder in Directory.GetDirectories(FullPath))
+            {
+                SubFolders.Add(new TagFolder(folder));
+            }
+        }
+
+        public string FullPath { get; set; }
+
+        public ObservableCollection<IDirectoryItem> SubFolders { get; set; } = new ObservableCollection<IDirectoryItem>();
+
+        private string _Name;
+        public string Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                _Name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string property)
+        {
+            if (PropertyChanged == null) return;
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
+        public override string ToString()
+        {
+            return _Name;
+        }
+    }
+
+    public class TagFolderItem : IDirectoryItem
+    {
+        public TagFolderItem(string itemname, string fullpath)
+        {
+            Name = new DirectoryInfo(itemname).Name;
+            FullPath = fullpath;
+        }
+
+        public string FullPath { get; set; }
+        private string _Name;
+        public string Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                _Name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string property)
+        {
+            if (PropertyChanged == null) return;
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
+        public override string ToString()
+        {
+            return _Name;
+        }
+    }
+
+    #endregion
 }

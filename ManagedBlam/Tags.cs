@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using PresentationODST.Controls;
+using PresentationODST.Controls.TagFieldControls;
 using PresentationODST.Controls.LayoutDocuments;
 using PresentationODST.Utilities;
 using Xceed.Wpf.AvalonDock.Layout;
