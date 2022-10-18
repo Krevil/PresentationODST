@@ -82,6 +82,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Controls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -97,7 +99,6 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="Xceed.Wpf.AvalonDock, Version=4.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>packages\Extended.Wpf.Toolkit.4.4.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
@@ -137,8 +138,14 @@
     <Compile Include="Controls\TagFieldControls\TagFieldFlagsControl.xaml.cs">
       <DependentUpon>TagFieldFlagsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TagFieldControls\TagFieldStringControl.xaml.cs">
+      <DependentUpon>TagFieldStringControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TagFieldControls\TagFieldReferenceControl.xaml.cs">
       <DependentUpon>TagFieldReferenceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TagFieldControls\TagFieldOldStringIDControl.xaml.cs">
+      <DependentUpon>TagFieldOldStringIDControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TagFieldControls\TagFieldStringIDControl.xaml.cs">
       <DependentUpon>TagFieldStringIDControl.xaml</DependentUpon>
@@ -183,9 +190,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TagFieldControls\TagFieldStringControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\TagFieldControls\TagFieldReferenceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TagFieldControls\TagFieldOldStringIDControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TagFieldControls\TagFieldStringIDControl.xaml">
       <SubType>Designer</SubType>

@@ -145,16 +145,6 @@
                         </Button>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
-
-                <!--
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Style.Triggers>
-
-                        </Style.Triggers>
-                    </Style>
-                </TreeView.ItemContainerStyle>
-                -->
             </TreeView>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="2" Background="#FFB6B6B6">

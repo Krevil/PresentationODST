@@ -23,19 +23,6 @@ namespace PresentationODST.Dialogs
         {
             DataContext = this;
             InitializeComponent();
-
-            /// Should probably migrate this elsewhere so it doesn't need to get all the tag groups each time you open the window
-            /*
-            foreach (Bungie.Tags.TagGroupType grouptype in Bungie.Tags.TagGroupType.GetTagGroups())
-            {
-                ListBoxItem NewListBoxItem = new ListBoxItem
-                {
-                    Content = grouptype.Extension
-                };
-                TagListBox.Items.Add(NewListBoxItem);
-            }
-            */
-
             TagListBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Extension", System.ComponentModel.ListSortDirection.Ascending));
         }
 

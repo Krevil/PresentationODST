@@ -40,6 +40,11 @@ namespace PresentationODST.Controls.TagFieldControls
                 {
                     AddComboBoxElement(i);
                 }
+                if (_TagField.Elements.Count == 0)
+                {
+                    ExpandButton.Content = "+";
+                    ElementGrid.Visibility = Visibility.Collapsed;
+                }
                 AddBlockItems();
                 HandleVisibility();
             }
@@ -97,14 +102,14 @@ namespace PresentationODST.Controls.TagFieldControls
                 DuplicateButton.IsEnabled = false;
                 return;
             }
+            else
+            {
+                AddButton.IsEnabled = true;
+            }
             if (_TagField.Elements.Count > 0)
             {
                 InsertButton.IsEnabled = true;
                 DuplicateButton.IsEnabled = true;
-            }
-            else
-            {
-                AddButton.IsEnabled = true;
             }
         }
 
@@ -171,6 +176,20 @@ namespace PresentationODST.Controls.TagFieldControls
             BlockListComboBox.Items.Add("NONE"); // Delete this when adding anything
             BlockListComboBox.SelectedIndex = 0;
             HandleVisibility();
+        }
+
+        private void ExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ElementGrid.Visibility == Visibility.Visible)
+            {
+                ElementGrid.Visibility = Visibility.Collapsed;
+                ExpandButton.Content = "+";
+            }
+            else if (_TagField.Elements.Count > 0)
+            {
+                ElementGrid.Visibility = Visibility.Visible;
+                ExpandButton.Content = "-";
+            }
         }
     }
 }

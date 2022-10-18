@@ -42,6 +42,12 @@ namespace PresentationODST.Controls.TagFieldControls
                 NameTextBlock.Text = value.FieldName;
                 TypeTextBlock.Text = value.FieldType.ToString().ToLower();
                 TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
+                if (value.FieldType == Bungie.Tags.TagFieldType.RealEulerAngles3d)
+                {
+                    Value1TypeTextBlock.Text = "i";
+                    Value2TypeTextBlock.Text = "j";
+                    Value3TypeTextBlock.Text = "k";
+                }
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;
@@ -52,7 +58,6 @@ namespace PresentationODST.Controls.TagFieldControls
 
         private void Value1TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("wtf");
             if (!IsLoaded) return;
             if (double.TryParse(Value1TextBox.Text, out _))
                 _TagField.SetStringData(new string[] { Value1TextBox.Text, Value2TextBox.Text, Value3TextBox.Text });

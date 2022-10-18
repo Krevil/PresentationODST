@@ -17,22 +17,24 @@
             <ColumnDefinition Width="65"/>
             <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="70"/>
-            <ColumnDefinition Width="500"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <!-- Change this to an image instead of just a + character -->
-        <Button x:Name="ExpandButton" Grid.Column="0" Content="+" Height="20" Background="#FFB2B2B2" Foreground="Black"/>
+        <Button x:Name="ExpandButton" Grid.Column="0" Height="20" Background="#FFB2B2B2" Foreground="Black" Click="ExpandButton_Click">
+            <TextBlock x:Name="ExpandButtonTextBlock" Text="-" FontSize="20" Margin="0,-7,0,0"/>
+        </Button>
         <TextBlock x:Name="NameTextBlock" Grid.Column="2" Text="Test" Height="20" Background="{x:Null}" Foreground="White"/>
         <ComboBox x:Name="BlockListComboBox" Grid.Column="3" BorderBrush="Black" Text="5000" IsReadOnly="False" Height="20" Background="#FFE0E0E0" SelectionChanged="BlockListComboBox_SelectionChanged" Margin="0,0,0,0">
 
         </ComboBox>
-        <Grid x:Name="BlockGrid" Grid.Row="1" Grid.ColumnSpan="10" Background="#FFBDBDBD">
+        <Grid x:Name="BlockGrid" Grid.Row="1" Grid.ColumnSpan="11" Background="#FFBDBDBD">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid x:Name="ElementGrid" Grid.Column="1"/>
         </Grid>
