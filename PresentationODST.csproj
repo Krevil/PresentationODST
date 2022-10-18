@@ -131,6 +131,9 @@
     <Compile Include="Controls\TagFieldControls\TagFieldBlockIndexControl.xaml.cs">
       <DependentUpon>TagFieldBlockIndexControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TagFieldControls\TagFieldElement3dControl.xaml.cs">
+      <DependentUpon>TagFieldElement3dControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TagFieldControls\TagFieldFlagsControl.xaml.cs">
       <DependentUpon>TagFieldFlagsControl.xaml</DependentUpon>
     </Compile>
@@ -161,6 +164,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TagFieldControls\TagFieldBlockIndexControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TagFieldControls\TagFieldElement3dControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
