@@ -129,16 +129,29 @@
             </MenuItem>
         </Menu>
         <Grid  Grid.Row="1" Grid.Column="0">
-            <TreeView x:Name="TagExplorer" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}">
+            <TreeView x:Name="TagExplorer" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}" TreeViewItem.Expanded="TagExplorer_Expanded" TreeViewItem.Collapsed="TagExplorer_Collapsed" PreviewKeyDown="TagExplorer_PreviewKeyDown">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagDirectoryItem}">
-                        <Button Content="{Binding Name}" Background="{x:Null}" BorderBrush="{x:Null}" Click="TagExplorerButton_Click" MouseDoubleClick="TagExplorerButton_DoubleClick" IsEnabled="{Binding IsFile}" Template="{DynamicResource TagExplorerButtonControlTemplate}"/>
+                        <Button Content="{Binding Name}" Background="{x:Null}" BorderBrush="{x:Null}" Click="TagExplorerButton_Click" MouseDoubleClick="TagExplorerButton_DoubleClick" IsEnabled="{Binding IsFile}" Template="{DynamicResource TagExplorerButtonControlTemplate}">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Open" Click="TagExplorerContextMenu_Open_Click"/>
+                                    <MenuItem Header="Duplicate" Click="TagExplorerContextMenu_Duplicate_Click"/>
+                                    <MenuItem Header="Rename" Click="TagExplorerContextMenu_Rename_Click"/>
+                                    <MenuItem Header="Delete" Click="TagExplorerContextMenu_Delete_Click"/>
+                                    <MenuItem Header="Open in Explorer" Click="TagExplorerContextMenu_FileExplorer_Click"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
+
                 <!--
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
-                        <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_PreviewMouseRightButtonDown"/>
+                        <Style.Triggers>
+
+                        </Style.Triggers>
                     </Style>
                 </TreeView.ItemContainerStyle>
                 -->

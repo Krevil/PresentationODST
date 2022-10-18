@@ -50,7 +50,7 @@ namespace PresentationODST
                 return false;
             else
             {
-                DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
+                TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
                 Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
                 return true;
             }
@@ -96,7 +96,7 @@ namespace PresentationODST
         {
             if (TagDocuments.Children[TagDocuments.SelectedContentIndex].Content.GetType() != typeof(TagView)) return;
             TagView SaveTagView = (TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
-            if (System.IO.File.Exists(Utilities.Path.ODSTEKTagsPath + SaveTagView.TagFile.Path.RelativePathWithExtension))
+            if (File.Exists(Utilities.Path.ODSTEKTagsPath + SaveTagView.TagFile.Path.RelativePathWithExtension))
             {
                 SaveTagView.Save();
             }
@@ -156,18 +156,171 @@ namespace PresentationODST
             Properties.Settings.Default.TagExplorerWidth = MainGrid.ColumnDefinitions[0].Width.Value;
             Properties.Settings.Default.Save();
         }
+
+
+        // I do it this way so that only the folders and files the user has visible are loaded. 
+        // This also means the user can add new files and folders and have it refresh, I just realised that
+        private void TagExplorer_Expanded(object sender, RoutedEventArgs e)
+        {
+            foreach (TagDirectoryItem item in ((TagDirectoryItem)((TreeViewItem)e.OriginalSource).DataContext).SubFolders)
+            {
+                if (!item.IsFile)
+                {
+                    foreach (string file in Directory.GetFiles(item.FullPath))
+                    {
+                        item.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = item });
+                    }
+                    foreach (string folder in Directory.GetDirectories(item.FullPath))
+                    {
+                        item.SubFolders.Add(new TagDirectoryItem(folder));
+                    }
+                }
+            }
+
+        }
+
+        private void TagExplorer_Collapsed(object sender, RoutedEventArgs e)
+        {
+            foreach (TagDirectoryItem item in ((TagDirectoryItem)((TreeViewItem)e.OriginalSource).DataContext).SubFolders)
+            {
+                if (!item.IsFile)
+                    item.SubFolders.Clear();
+            }
+        }
+
+        private void TagExplorerContextMenu_Open_Click(object sender, RoutedEventArgs e)
+        {
+            ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
+        }
+
+        private void TagExplorerContextMenu_Duplicate_Click(object sender, RoutedEventArgs e)
+        {
+            string FileName = ((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath;
+            Bungie.Tags.TagPath TagName = Bungie.Tags.TagPath.FromFilename(FileName);
+            string CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy." + TagName.Extension;
+            if (File.Exists(CopyPath))
+            {
+                for (int i = 2; i < 250; i++) // No one is going to make over 250 copies of the same file, right?
+                {
+                    if (File.Exists(Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension))
+                        continue;
+                    else
+                    {
+                        CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension;
+                        break;
+                    }
+                }
+            }
+            File.Copy(FileName, CopyPath);
+            TagDirectoryItem Parent = ((TagDirectoryItem)((MenuItem)sender).DataContext).ParentItem;
+            Parent.SubFolders.Add(new TagDirectoryItem(CopyPath) { ParentItem = Parent });
+        }
+
+        private void TagExplorerContextMenu_FileExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            string FolderPath = System.IO.Path.GetDirectoryName(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
+            if (FolderPath == null || FolderPath == "") return;
+            Process.Start("explorer.exe", FolderPath);
+        }
+
+        private void TagExplorerContextMenu_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            TagDirectoryItem DeletedFile = ((TagDirectoryItem)((MenuItem)sender).DataContext);
+            if (!File.Exists(DeletedFile.FullPath)) return;
+            File.Delete(DeletedFile.FullPath);
+            DeletedFile.ParentItem.SubFolders.Remove(DeletedFile);
+        }
+
+        private void TagExplorer_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.F5) return;
+            ((TagDirectory)TagExplorer.DataContext).TagDirectories.Clear();
+            TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
+        }
+
+        private void TagExplorerContextMenu_Rename_Click(object sender, RoutedEventArgs e)
+        {
+            Dialogs.TagRenamer Renamer = new Dialogs.TagRenamer();
+            TagDirectoryItem ItemToRename = (TagDirectoryItem)((MenuItem)sender).DataContext;
+            string OriginalPath = ItemToRename.FullPath;
+            Renamer.NameTextBox.Text = ItemToRename.Name;
+            if (Renamer.ShowDialog() == true)
+            {
+                ItemToRename.FullPath = ItemToRename.FullPath.Replace(ItemToRename.Name, Renamer.NameTextBox.Text);
+                ItemToRename.Name = Renamer.NameTextBox.Text;
+                File.Move(OriginalPath, ItemToRename.FullPath);
+            }
+        }
+
+        public static void NewTag()
+        {
+            MainWindow.GroupSelector = new Dialogs.TagGroupSelector();
+            if (MainWindow.GroupSelector.ShowDialog() == true)
+            {
+                LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+                Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
+                Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)MainWindow.GroupSelector.TagListBox.SelectedItem;
+                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + MainWindow.NewTagCount, SelectedItem.Extension);
+                NewTag.New(NewPath);
+                LayoutDocument TagTab = new LayoutDocument
+                {
+                    Title = "tag" + MainWindow.NewTagCount + "." + SelectedItem.Extension,
+                    Content = new TagView()
+                };
+                TagView NewTagView = (TagView)TagTab.Content;
+                NewTagView.TagFile = NewTag;
+                foreach (Bungie.Tags.TagField field in NewTag.Fields)
+                {
+                    ManagedBlam.Tags.AddFieldValues(NewTagView.TagGrid, field);
+                }
+                ldp.Children.Add(TagTab);
+                ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
+                MainWindow.NewTagCount++;
+            }
+        }
     }
 
     #region TreeView Malarky
 
-    public class TagDirectory
+    public class TagDirectory : INotifyPropertyChanged
     {
         public TagDirectory(string dir)
         {
-            TagDirectories.Add(new TagDirectoryItem(dir));
+            TagDirectoryItem TagDir = new TagDirectoryItem(dir);
+            foreach (string file in Directory.GetFiles(dir))
+            {
+                TagDir.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = TagDir });
+            }
+            foreach (string folder in Directory.GetDirectories(dir))
+            {
+                TagDir.SubFolders.Add(new TagDirectoryItem(folder));
+            }
+            // Hack to get the initial files and folders
+            _TagDirectories.Add(TagDir);
         }
 
-        public ObservableCollection<TagDirectoryItem> TagDirectories { get; set; } = new ObservableCollection<TagDirectoryItem>();
+        // Look into FileSystemWatcher as a replacement for this
+        private ObservableCollection<TagDirectoryItem> _TagDirectories = new ObservableCollection<TagDirectoryItem>();
+        public ObservableCollection<TagDirectoryItem> TagDirectories
+        {
+            get
+            {
+                return _TagDirectories;
+            }
+            set
+            {
+                _TagDirectories = value;
+                OnPropertyChanged("TagDirectories");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string property)
+        {
+            if (PropertyChanged == null) return;
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(property));
+        }
     }
 
     public class TagDirectoryItem : INotifyPropertyChanged
@@ -179,6 +332,7 @@ namespace PresentationODST
             _Name = DirInfo.Name;
             IsFile = !DirInfo.Attributes.HasFlag(FileAttributes.Directory);
 
+            /*
             if (!IsFile)
             {
                 foreach (string file in Directory.GetFiles(FullPath))
@@ -190,11 +344,12 @@ namespace PresentationODST
                     SubFolders.Add(new TagDirectoryItem(folder));
                 }
             }
+            */
         }
 
         public bool IsFile { get; set; }
         public string FullPath { get; set; }
-
+        public TagDirectoryItem ParentItem { get; set; }
         public ObservableCollection<TagDirectoryItem> SubFolders { get; set; } = new ObservableCollection<TagDirectoryItem>();
 
         private string _Name;

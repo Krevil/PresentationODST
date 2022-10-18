@@ -92,7 +92,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -144,6 +143,9 @@
     <Compile Include="Controls\Vectors\ODSTIcon.xaml.cs">
       <DependentUpon>ODSTIcon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TagRenamer.xaml.cs">
+      <DependentUpon>TagRenamer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\Path.cs" />
     <Compile Include="Utilities\WPF.cs" />
     <Page Include="Controls\LayoutDocuments\HomeScreen.xaml">
@@ -191,6 +193,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\TagGroupSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\TagRenamer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
