@@ -17,9 +17,9 @@ namespace PresentationODST.Controls.TagFieldControls
     /// <summary>
     /// Interaction logic for TagFieldElement.xaml
     /// </summary>
-    public partial class TagFieldElement3dControl : UserControl
+    public partial class TagFieldElement2dControl : UserControl
     {
-        public TagFieldElement3dControl()
+        public TagFieldElement2dControl()
         {
             InitializeComponent();
             DataContext = this;
@@ -38,7 +38,6 @@ namespace PresentationODST.Controls.TagFieldControls
                 _TagField = value;
                 Value1TextBox.Text = value.GetStringData()[0];
                 Value2TextBox.Text = value.GetStringData()[1];
-                Value3TextBox.Text = value.GetStringData()[2];
                 NameTextBlock.Text = value.FieldName;
                 if (value.Units.Length > 0)
                 {
@@ -59,11 +58,23 @@ namespace PresentationODST.Controls.TagFieldControls
                 }
                 switch (value.FieldType)
                 {
-                    case Bungie.Tags.TagFieldType.RealEulerAngles3d:
-                    case Bungie.Tags.TagFieldType.RealVector3d:
-                        Value1TypeTextBlock.Text = "i";
-                        Value2TypeTextBlock.Text = "j";
-                        Value3TypeTextBlock.Text = "k";
+                    case Bungie.Tags.TagFieldType.RealEulerAngles2d:
+                        Value1TypeTextBlock.Text = "y";
+                        Value2TypeTextBlock.Text = "p";
+                        break;
+                    case Bungie.Tags.TagFieldType.Point2d:
+                    case Bungie.Tags.TagFieldType.RealPlane2d:
+                    case Bungie.Tags.TagFieldType.RealPoint2d:
+                    case Bungie.Tags.TagFieldType.RealVector2d:
+                    case Bungie.Tags.TagFieldType.Rectangle2d:
+                        Value1TypeTextBlock.Text = "x";
+                        Value2TypeTextBlock.Text = "y";
+                        break;
+                    case Bungie.Tags.TagFieldType.RealFractionBounds:
+                    case Bungie.Tags.TagFieldType.RealBounds:
+                    case Bungie.Tags.TagFieldType.AngleBounds:
+                        Value1TypeTextBlock.Text = "";
+                        Value2TypeTextBlock.Text = "to";
                         break;
                 }
                 if (value.Description.Length > 0)
@@ -78,21 +89,15 @@ namespace PresentationODST.Controls.TagFieldControls
         {
             if (!IsLoaded) return;
             if (double.TryParse(Value1TextBox.Text, out _))
-                _TagField.SetStringData(new string[] { Value1TextBox.Text, Value2TextBox.Text, Value3TextBox.Text });
+                _TagField.SetStringData(new string[] { Value1TextBox.Text, Value2TextBox.Text });
         }
 
         private void Value2TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!IsLoaded) return;
             if (double.TryParse(Value2TextBox.Text, out _))
-                _TagField.SetStringData(new string[] { Value1TextBox.Text, Value2TextBox.Text, Value3TextBox.Text });
+                _TagField.SetStringData(new string[] { Value1TextBox.Text, Value2TextBox.Text });
         }
 
-        private void Value3TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (!IsLoaded) return;
-            if (double.TryParse(Value3TextBox.Text, out _))
-                _TagField.SetStringData(new string[] { Value1TextBox.Text, Value2TextBox.Text, Value3TextBox.Text });
-        }
     }
 }

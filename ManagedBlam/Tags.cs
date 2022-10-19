@@ -14,6 +14,7 @@ namespace PresentationODST.ManagedBlam
     class Tags
     {
         public static readonly Bungie.Tags.TagGroupType[] TagGroups = Bungie.Tags.TagGroupType.GetTagGroups();
+        public static List<Bungie.Tags.TagFile> OpenTags = new List<Bungie.Tags.TagFile>();
 
         public static void OpenTag(string filename)
         {
@@ -24,9 +25,15 @@ namespace PresentationODST.ManagedBlam
                 return;
             }
             Bungie.Tags.TagPath OpenTagPath = Bungie.Tags.TagPath.FromPathAndExtension(OpenPath[0], OpenPath[1]);
-            if (!System.IO.File.Exists(filename)) return;
+            if (!System.IO.File.Exists(Path.ODSTEKTagsPath + OpenTagPath.RelativePathWithExtension))
+            {
+                MessageBox.Show("Couldn't find tag file", "Tag Load Error");
+                return;
+            }
+            // Maybe stop users from opening the same tag more than once? Won't break anything by doing so, other than the user's fragile sanity
             LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
             Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile(OpenTagPath);
+            
             LayoutDocument TagTab = new LayoutDocument
             {
                 Title = String.Join(".", OpenPath),
@@ -40,6 +47,7 @@ namespace PresentationODST.ManagedBlam
             }
             ldp.Children.Add(TagTab);
             ldp.SelectedContentIndex = ldp.Children.IndexOf(TagTab);
+            OpenTags.Add(NewTag);
         }
 
         public static void NewTag()
@@ -140,6 +148,14 @@ namespace PresentationODST.ManagedBlam
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 29 + ((Flags.Items.Length - 1) * 19)); //flag fields size varies
                     break;
+                case Bungie.Tags.TagFieldType.BlockFlags:
+                case Bungie.Tags.TagFieldType.ByteBlockFlags:
+                case Bungie.Tags.TagFieldType.WordBlockFlags:
+                    Bungie.Tags.TagFieldBlockFlags BlockFlags = (Bungie.Tags.TagFieldBlockFlags)field;
+                    RowIndex = grid.Children.Add(new TagFieldBlockFlagsControl { TagField = BlockFlags, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex, 29 + ((BlockFlags.Items.Length - 1) * 19)); //flag fields size varies
+                    break;
                 case Bungie.Tags.TagFieldType.ShortBlockIndexCustomSearch:
                 case Bungie.Tags.TagFieldType.CharBlockIndexCustomSearch:
                 case Bungie.Tags.TagFieldType.LongBlockIndexCustomSearch:
@@ -150,11 +166,32 @@ namespace PresentationODST.ManagedBlam
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
+                case Bungie.Tags.TagFieldType.RealQuaternion:
+                    Bungie.Tags.TagFieldElementArraySingle Element4d = (Bungie.Tags.TagFieldElementArraySingle)field;
+                    RowIndex = grid.Children.Add(new TagFieldElement4dControl { TagField = Element4d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex, 31);
+                    break;
+                case Bungie.Tags.TagFieldType.RealVector3d:
                 case Bungie.Tags.TagFieldType.RealEulerAngles3d:
                 case Bungie.Tags.TagFieldType.RealPlane3d:
                 case Bungie.Tags.TagFieldType.RealPoint3d:
-                    Bungie.Tags.TagFieldElementArraySingle ArraySingle = (Bungie.Tags.TagFieldElementArraySingle)field;
-                    RowIndex = grid.Children.Add(new TagFieldElement3dControl { TagField = ArraySingle, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    Bungie.Tags.TagFieldElementArraySingle Element3d = (Bungie.Tags.TagFieldElementArraySingle)field;
+                    RowIndex = grid.Children.Add(new TagFieldElement3dControl { TagField = Element3d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex, 31);
+                    break;
+                case Bungie.Tags.TagFieldType.RealEulerAngles2d:
+                case Bungie.Tags.TagFieldType.AngleBounds:
+                case Bungie.Tags.TagFieldType.Point2d:
+                case Bungie.Tags.TagFieldType.RealPlane2d:
+                case Bungie.Tags.TagFieldType.RealPoint2d:
+                case Bungie.Tags.TagFieldType.RealVector2d:
+                case Bungie.Tags.TagFieldType.Rectangle2d:
+                case Bungie.Tags.TagFieldType.RealFractionBounds:
+                case Bungie.Tags.TagFieldType.RealBounds:
+                    Bungie.Tags.TagFieldElementArraySingle Element2d = (Bungie.Tags.TagFieldElementArraySingle)field;
+                    RowIndex = grid.Children.Add(new TagFieldElement2dControl { TagField = Element2d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;

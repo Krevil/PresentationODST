@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="PresentationODST.Controls.TagFieldControls.TagFieldFlagsControl"
+﻿<UserControl
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PresentationODST.Controls.TagFieldControls"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="PresentationODST.Controls.TagFieldControls.TagFieldBlockFlagsControl"
              mc:Ignorable="d" Margin="0,3,0,3">
     <UserControl.Resources>
         <ControlTemplate x:Key="ListBoxControlTemplate" TargetType="{x:Type ListBox}">
@@ -30,15 +31,11 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="HintTextBlock" Grid.Column="0" Text="?" Background="{x:Null}" Foreground="#FF4D9AE8" TextAlignment="Center" Visibility="Hidden">
             <TextBlock.ToolTip>
-                <ToolTip>
-
-                </ToolTip>
+                <ToolTip/>
             </TextBlock.ToolTip>
         </TextBlock>
         <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}"/>
-        <ListBox x:Name="ValueListBox" Grid.Column="2" BorderBrush="Black" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="#FFE0E0E0" PreviewMouseWheel="ValueListBox_PreviewMouseWheel" Template="{StaticResource ListBoxControlTemplate}">
-
-        </ListBox>
+        <ListBox x:Name="ValueListBox" Grid.Column="2" BorderBrush="Black" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="#FFE0E0E0" PreviewMouseWheel="ValueListBox_PreviewMouseWheel" Template="{StaticResource ListBoxControlTemplate}"/>
         <TextBlock x:Name="TypeTextBlock" Grid.Column="3" Background="{x:Null}"/>
     </Grid>
 </UserControl>

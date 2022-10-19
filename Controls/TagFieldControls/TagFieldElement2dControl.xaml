@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="PresentationODST.Controls.TagFieldControls.TagFieldElement2dControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:PresentationODST.Controls.TagFieldControls"
+             mc:Ignorable="d" Margin="0,3,0,3">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <!-- For hints -->
+            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="HintTextBlock" Grid.Column="0" Text="?" Background="{x:Null}" Foreground="#FF4D9AE8" TextAlignment="Center" Visibility="Hidden">
+            <TextBlock.ToolTip>
+                <ToolTip>
+
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
+        <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}"/>
+        <TextBlock x:Name="Value1TypeTextBlock" Grid.Column="2" Text="x" Background="{x:Null}" HorizontalAlignment="Center"/>
+        <TextBox x:Name="Value1TextBox" Grid.Column="3" BorderBrush="Black" Text="" IsReadOnly="False" Background="#FFE0E0E0" TextChanged="Value1TextBox_TextChanged"/>
+        <TextBlock x:Name="Value2TypeTextBlock" Grid.Column="4" Text="y" Background="{x:Null}" HorizontalAlignment="Center"/>
+        <TextBox x:Name="Value2TextBox" Grid.Column="5" BorderBrush="Black" Text="" IsReadOnly="False" Background="#FFE0E0E0" TextChanged="Value2TextBox_TextChanged"/>
+        <TextBlock x:Name="TypeTextBlock" Grid.Column="8" Background="{x:Null}"/>
+    </Grid>
+</UserControl>

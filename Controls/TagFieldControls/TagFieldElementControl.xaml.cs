@@ -38,8 +38,23 @@ namespace PresentationODST.Controls.TagFieldControls
                 _TagField = value;
                 ValueTextBox.Text = value.GetStringData();
                 NameTextBlock.Text = value.FieldName;
-                TypeTextBlock.Text = value.FieldType.ToString().ToLower();
-                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
+                if (value.Units.Length > 0)
+                {
+                    TypeTextBlock.Visibility = Visibility.Visible;
+                    if (Properties.Settings.Default.FieldTypes)
+                    {
+                        TypeTextBlock.Text = value.Units + " (" + value.FieldType.ToString().ToLower() + ")";
+                    }
+                    else
+                    {
+                        TypeTextBlock.Text = value.Units;
+                    }
+                }
+                else
+                {
+                    TypeTextBlock.Text = "(" + value.FieldType.ToString().ToLower() + ")";
+                    TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
+                }
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;

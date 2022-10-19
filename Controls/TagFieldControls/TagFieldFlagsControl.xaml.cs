@@ -46,8 +46,23 @@ namespace PresentationODST.Controls.TagFieldControls
                     ValueListBox.Items.Add(box);
                 }
                 NameTextBlock.Text = value.FieldName;
-                TypeTextBlock.Text = value.FieldType.ToString().ToLower();
-                TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
+                if (value.Units.Length > 0)
+                {
+                    TypeTextBlock.Visibility = Visibility.Visible;
+                    if (Properties.Settings.Default.FieldTypes)
+                    {
+                        TypeTextBlock.Text = value.Units + " (" + value.FieldType.ToString().ToLower() + ")";
+                    }
+                    else
+                    {
+                        TypeTextBlock.Text = value.Units;
+                    }
+                }
+                else
+                {
+                    TypeTextBlock.Text = "(" + value.FieldType.ToString().ToLower() + ")";
+                    TypeTextBlock.Visibility = Properties.Settings.Default.FieldTypes ? Visibility.Visible : Visibility.Hidden;
+                }
                 if (value.Description.Length > 0)
                 {
                     HintTextBlock.Visibility = Visibility.Visible;
@@ -55,17 +70,6 @@ namespace PresentationODST.Controls.TagFieldControls
                 }
             }
         }
-        /*
-        private void ValueListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!IsLoaded) return;
-
-            foreach (CheckBox box in ValueListBox.Items)
-            {
-                _TagField.SetBit(box.Content.ToString(), (bool)box.IsChecked);
-            }
-        }
-        */
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {

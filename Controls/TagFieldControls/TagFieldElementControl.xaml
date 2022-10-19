@@ -12,7 +12,7 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="HintTextBlock" Grid.Column="0" Text="?" Background="{x:Null}" Foreground="#FF4D9AE8" TextAlignment="Center" Visibility="Hidden">
+        <TextBlock x:Name="HintTextBlock" Grid.Column="0" Text="?" Background="{x:Null}" Foreground="#FF4D9AE8" TextAlignment="Center" Visibility="Visible">
             <TextBlock.ToolTip>
                 <ToolTip>
 

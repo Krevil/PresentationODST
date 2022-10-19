@@ -166,13 +166,13 @@ namespace PresentationODST
             {
                 if (!item.IsFile)
                 {
-                    foreach (string file in Directory.GetFiles(item.FullPath))
-                    {
-                        item.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = item });
-                    }
                     foreach (string folder in Directory.GetDirectories(item.FullPath))
                     {
                         item.SubFolders.Add(new TagDirectoryItem(folder));
+                    }
+                    foreach (string file in Directory.GetFiles(item.FullPath))
+                    {
+                        item.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = item });
                     }
                 }
             }
@@ -254,17 +254,17 @@ namespace PresentationODST
 
         public static void NewTag()
         {
-            MainWindow.GroupSelector = new Dialogs.TagGroupSelector();
-            if (MainWindow.GroupSelector.ShowDialog() == true)
+            GroupSelector = new Dialogs.TagGroupSelector();
+            if (GroupSelector.ShowDialog() == true)
             {
-                LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+                LayoutDocumentPane ldp = Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
                 Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
-                Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)MainWindow.GroupSelector.TagListBox.SelectedItem;
-                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + MainWindow.NewTagCount, SelectedItem.Extension);
+                Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)GroupSelector.TagListBox.SelectedItem;
+                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + NewTagCount, SelectedItem.Extension);
                 NewTag.New(NewPath);
                 LayoutDocument TagTab = new LayoutDocument
                 {
-                    Title = "tag" + MainWindow.NewTagCount + "." + SelectedItem.Extension,
+                    Title = "tag" + NewTagCount + "." + SelectedItem.Extension,
                     Content = new TagView()
                 };
                 TagView NewTagView = (TagView)TagTab.Content;
@@ -275,7 +275,7 @@ namespace PresentationODST
                 }
                 ldp.Children.Add(TagTab);
                 ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
-                MainWindow.NewTagCount++;
+                NewTagCount++;
             }
         }
     }
@@ -287,13 +287,13 @@ namespace PresentationODST
         public TagDirectory(string dir)
         {
             TagDirectoryItem TagDir = new TagDirectoryItem(dir);
-            foreach (string file in Directory.GetFiles(dir))
-            {
-                TagDir.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = TagDir });
-            }
             foreach (string folder in Directory.GetDirectories(dir))
             {
                 TagDir.SubFolders.Add(new TagDirectoryItem(folder));
+            }
+            foreach (string file in Directory.GetFiles(dir))
+            {
+                TagDir.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = TagDir });
             }
             // Hack to get the initial files and folders
             _TagDirectories.Add(TagDir);

@@ -132,8 +132,17 @@
     <Compile Include="Controls\TagFieldControls\TagFieldBlockIndexControl.xaml.cs">
       <DependentUpon>TagFieldBlockIndexControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TagFieldControls\TagFieldElement2dControl.xaml.cs">
+      <DependentUpon>TagFieldElement2dControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TagFieldControls\TagFieldElement4dControl.xaml.cs">
+      <DependentUpon>TagFieldElement4dControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TagFieldControls\TagFieldElement3dControl.xaml.cs">
       <DependentUpon>TagFieldElement3dControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TagFieldControls\TagFieldBlockFlagsControl.xaml.cs">
+      <DependentUpon>TagFieldBlockFlagsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TagFieldControls\TagFieldFlagsControl.xaml.cs">
       <DependentUpon>TagFieldFlagsControl.xaml</DependentUpon>
@@ -174,6 +183,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TagFieldControls\TagFieldElement2dControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TagFieldControls\TagFieldElement4dControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\TagFieldControls\TagFieldElement3dControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,6 +202,10 @@
     <Page Include="Controls\TagFieldControls\TagFieldEnumControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TagFieldControls\TagFieldBlockFlagsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TagFieldControls\TagFieldFlagsControl.xaml">
       <SubType>Designer</SubType>
