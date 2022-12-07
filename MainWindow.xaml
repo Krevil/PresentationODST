@@ -129,9 +129,14 @@
             </MenuItem>
         </Menu>
         <Grid  Grid.Row="1" Grid.Column="0">
-            <TreeView x:Name="TagExplorer" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}" TreeViewItem.Expanded="TagExplorer_Expanded" TreeViewItem.Collapsed="TagExplorer_Collapsed" PreviewKeyDown="TagExplorer_PreviewKeyDown">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!-- <TextBox x:Name="SearchBar" Text="Search..." Grid.Row="0" TextChanged="SearchBar_TextChanged"/> -->
+            <TreeView x:Name="TagExplorer" Grid.Row="1" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}" PreviewKeyDown="TagExplorer_PreviewKeyDown">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders}" DataType="{x:Type local:TagDirectoryItem}">
+                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders, Mode=TwoWay}" DataType="{x:Type local:TagDirectoryItem}">
                         <Button Content="{Binding Name}" Background="{x:Null}" BorderBrush="{x:Null}" Click="TagExplorerButton_Click" MouseDoubleClick="TagExplorerButton_DoubleClick" IsEnabled="{Binding IsFile}" Template="{DynamicResource TagExplorerButtonControlTemplate}">
                             <Button.ContextMenu>
                                 <ContextMenu>

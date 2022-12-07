@@ -167,7 +167,7 @@ namespace PresentationODST.ManagedBlam
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
                 case Bungie.Tags.TagFieldType.RealQuaternion:
-                    Bungie.Tags.TagFieldElementArraySingle Element4d = (Bungie.Tags.TagFieldElementArraySingle)field;
+                    Bungie.Tags.TagFieldElementArray Element4d = (Bungie.Tags.TagFieldElementArray)field;
                     RowIndex = grid.Children.Add(new TagFieldElement4dControl { TagField = Element4d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
@@ -176,7 +176,7 @@ namespace PresentationODST.ManagedBlam
                 case Bungie.Tags.TagFieldType.RealEulerAngles3d:
                 case Bungie.Tags.TagFieldType.RealPlane3d:
                 case Bungie.Tags.TagFieldType.RealPoint3d:
-                    Bungie.Tags.TagFieldElementArraySingle Element3d = (Bungie.Tags.TagFieldElementArraySingle)field;
+                    Bungie.Tags.TagFieldElementArray Element3d = (Bungie.Tags.TagFieldElementArray)field;
                     RowIndex = grid.Children.Add(new TagFieldElement3dControl { TagField = Element3d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
@@ -190,7 +190,7 @@ namespace PresentationODST.ManagedBlam
                 case Bungie.Tags.TagFieldType.Rectangle2d:
                 case Bungie.Tags.TagFieldType.RealFractionBounds:
                 case Bungie.Tags.TagFieldType.RealBounds:
-                    Bungie.Tags.TagFieldElementArraySingle Element2d = (Bungie.Tags.TagFieldElementArraySingle)field;
+                    Bungie.Tags.TagFieldElementArray Element2d = (Bungie.Tags.TagFieldElementArray)field;
                     RowIndex = grid.Children.Add(new TagFieldElement2dControl { TagField = Element2d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);

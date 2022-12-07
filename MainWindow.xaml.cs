@@ -48,6 +48,8 @@ namespace PresentationODST
         {
             if (Properties.Settings.Default.ODSTEKPath.Length <= 0)
                 return false;
+            else if (!Directory.Exists(Properties.Settings.Default.ODSTEKPath + @"\tags"))
+                return false;
             else
             {
                 TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
@@ -157,37 +159,6 @@ namespace PresentationODST
             Properties.Settings.Default.Save();
         }
 
-
-        // I do it this way so that only the folders and files the user has visible are loaded. 
-        // This also means the user can add new files and folders and have it refresh, I just realised that
-        private void TagExplorer_Expanded(object sender, RoutedEventArgs e)
-        {
-            foreach (TagDirectoryItem item in ((TagDirectoryItem)((TreeViewItem)e.OriginalSource).DataContext).SubFolders)
-            {
-                if (!item.IsFile)
-                {
-                    foreach (string folder in Directory.GetDirectories(item.FullPath))
-                    {
-                        item.SubFolders.Add(new TagDirectoryItem(folder));
-                    }
-                    foreach (string file in Directory.GetFiles(item.FullPath))
-                    {
-                        item.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = item });
-                    }
-                }
-            }
-
-        }
-
-        private void TagExplorer_Collapsed(object sender, RoutedEventArgs e)
-        {
-            foreach (TagDirectoryItem item in ((TagDirectoryItem)((TreeViewItem)e.OriginalSource).DataContext).SubFolders)
-            {
-                if (!item.IsFile)
-                    item.SubFolders.Clear();
-            }
-        }
-
         private void TagExplorerContextMenu_Open_Click(object sender, RoutedEventArgs e)
         {
             ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
@@ -195,12 +166,13 @@ namespace PresentationODST
 
         private void TagExplorerContextMenu_Duplicate_Click(object sender, RoutedEventArgs e)
         {
+            
             string FileName = ((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath;
             Bungie.Tags.TagPath TagName = Bungie.Tags.TagPath.FromFilename(FileName);
             string CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy." + TagName.Extension;
             if (File.Exists(CopyPath))
             {
-                for (int i = 2; i < 250; i++) // No one is going to make over 250 copies of the same file, right?
+                for (int i = 2; i < 250; i++) // No one is going to make over 250 copies of the same file, right? Consider this your free sanity check
                 {
                     if (File.Exists(Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension))
                         continue;
@@ -212,8 +184,6 @@ namespace PresentationODST
                 }
             }
             File.Copy(FileName, CopyPath);
-            TagDirectoryItem Parent = ((TagDirectoryItem)((MenuItem)sender).DataContext).ParentItem;
-            Parent.SubFolders.Add(new TagDirectoryItem(CopyPath) { ParentItem = Parent });
         }
 
         private void TagExplorerContextMenu_FileExplorer_Click(object sender, RoutedEventArgs e)
@@ -225,16 +195,16 @@ namespace PresentationODST
 
         private void TagExplorerContextMenu_Delete_Click(object sender, RoutedEventArgs e)
         {
-            TagDirectoryItem DeletedFile = ((TagDirectoryItem)((MenuItem)sender).DataContext);
+            TagDirectoryItem DeletedFile = (TagDirectoryItem)((MenuItem)sender).DataContext;
             if (!File.Exists(DeletedFile.FullPath)) return;
             File.Delete(DeletedFile.FullPath);
-            DeletedFile.ParentItem.SubFolders.Remove(DeletedFile);
+            //DeletedFile.ParentItem.SubFolders.Remove(DeletedFile); // should not need this as the watcher will handle it
         }
 
         private void TagExplorer_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.F5) return;
-            ((TagDirectory)TagExplorer.DataContext).TagDirectories.Clear();
+            ((TagDirectory)TagExplorer.DataContext).TagDirectories.Clear(); // maybe change this to a new TagDirectory()?
             TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
         }
 
@@ -278,80 +248,164 @@ namespace PresentationODST
                 NewTagCount++;
             }
         }
+
+        /*
+        private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            foreach (UIElement item in TagExplorer.Items)
+            {
+                if (SearchBar.Text == "")
+                {
+                    item.Visibility = Visibility.Visible;
+                    continue;
+                }
+                if (!item.ToString().Contains(SearchBar.Text))
+                {
+                    item.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    item.Visibility = Visibility.Visible;
+                }
+            }
+        }
+        */
     }
 
     #region TreeView Malarky
 
-    public class TagDirectory : INotifyPropertyChanged
+    public class TagDirectory
     {
         public TagDirectory(string dir)
         {
-            TagDirectoryItem TagDir = new TagDirectoryItem(dir);
-            foreach (string folder in Directory.GetDirectories(dir))
+            FileSystemWatcher watcher = new FileSystemWatcher
             {
-                TagDir.SubFolders.Add(new TagDirectoryItem(folder));
-            }
-            foreach (string file in Directory.GetFiles(dir))
-            {
-                TagDir.SubFolders.Add(new TagDirectoryItem(file) { ParentItem = TagDir });
-            }
-            // Hack to get the initial files and folders
-            _TagDirectories.Add(TagDir);
+                Path = Utilities.Path.ODSTEKTagsPath,
+                IncludeSubdirectories = true,
+                NotifyFilter = (NotifyFilters)95,
+                Filter = "*.*"
+            };
+            watcher.Changed += new FileSystemEventHandler(OnFileChanged);
+            watcher.Created += new FileSystemEventHandler(OnFileChanged);
+            watcher.Deleted += new FileSystemEventHandler(OnFileChanged);
+            watcher.Renamed += new RenamedEventHandler(OnFileRenamed);
+            watcher.EnableRaisingEvents = true;
+            DirectoryInfo TagsInfo = new DirectoryInfo(Properties.Settings.Default.ODSTEKPath + @"\tags");
+            TagDirectories.Add(new TagDirectoryItem(TagsInfo));
+
+            AllTagDirectories.AddRange(TagDirectories);
         }
 
-        // Look into FileSystemWatcher as a replacement for this
-        private ObservableCollection<TagDirectoryItem> _TagDirectories = new ObservableCollection<TagDirectoryItem>();
-        public ObservableCollection<TagDirectoryItem> TagDirectories
+        public ObservableCollection<TagDirectoryItem> TagDirectories { get; set; } = new ObservableCollection<TagDirectoryItem>();
+        public static List<TagDirectoryItem> AllTagDirectories { get; set; } = new List<TagDirectoryItem>();
+
+        private void OnFileChanged(object source, FileSystemEventArgs e)
         {
-            get
+            Debug.WriteLine("{0}, with path {1} has been {2}", e.Name, e.FullPath, e.ChangeType);
+            switch (e.ChangeType)
             {
-                return _TagDirectories;
+                case WatcherChangeTypes.Deleted:
+                    TagDirectoryItem DeletedItem = AllTagDirectories.Find(x => x.FullPath == e.FullPath);
+                    if (DeletedItem == null)
+                        return;
+                    if (DeletedItem.ParentItem != null)
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => DeletedItem.ParentItem.SubFolders.Remove(DeletedItem)));
+                    AllTagDirectories.Remove(DeletedItem);
+                    break;
+                case WatcherChangeTypes.Created:
+                    TagDirectoryItem ParentDir = AllTagDirectories.Find(x => x.FullPath == new DirectoryInfo(e.FullPath).Parent.FullName);
+                    if (ParentDir == null)
+                        return;
+                    TagDirectoryItem CreatedDir = new TagDirectoryItem(new DirectoryInfo(e.FullPath), ParentDir);
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() => ParentDir.SubFolders.Add(CreatedDir)));
+                    AllTagDirectories.Add(CreatedDir);
+                    break;
+                default:
+                    break;
             }
-            set
-            {
-                _TagDirectories = value;
-                OnPropertyChanged("TagDirectories");
-            }
+            
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string property)
+        private void OnFileRenamed(object source, RenamedEventArgs e)
         {
-            if (PropertyChanged == null) return;
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(property));
+            Debug.WriteLine(" {0} renamed to {1}", e.OldFullPath, e.FullPath);
+            TagDirectoryItem RenamedItem = AllTagDirectories.Find(x => x.FullPath == e.OldFullPath);
+            if (RenamedItem == null)
+                return;
+            RenamedItem.FullPath = e.FullPath;
+            RenamedItem.Name = e.Name;
         }
     }
-
+    // search hack idea: totally bypass everything and just hide the regular tag browser items and only show items using tagsinfo.getfilesysteminfos(user_search_string, SearchOptions.AllDirectories)
+    // treeviews may support filtering as a built in thing? look into that
     public class TagDirectoryItem : INotifyPropertyChanged
     {
-        public TagDirectoryItem(string fullpath)
+        public TagDirectoryItem(FileSystemInfo info, TagDirectoryItem parent)
         {
-            FullPath = fullpath;
-            DirectoryInfo DirInfo = new DirectoryInfo(fullpath);
-            _Name = DirInfo.Name;
-            IsFile = !DirInfo.Attributes.HasFlag(FileAttributes.Directory);
-
-            /*
+            FullPath = info.FullName;
+            Name = info.Name;
+            IsFile = !info.Attributes.HasFlag(FileAttributes.Directory);
+            DirectoryInfo dirinfo = new DirectoryInfo(info.FullName);
+            ParentItem = parent;
             if (!IsFile)
             {
-                foreach (string file in Directory.GetFiles(FullPath))
+                try
                 {
-                    SubFolders.Add(new TagDirectoryItem(file));
+                    foreach (FileSystemInfo fsinfo in dirinfo.GetFileSystemInfos())
+                    {
+                        SubFolders.Add(new TagDirectoryItem(fsinfo, this));
+                    }
                 }
-                foreach (string folder in Directory.GetDirectories(FullPath))
+                catch
                 {
-                    SubFolders.Add(new TagDirectoryItem(folder));
+                    Debug.WriteLine("Failed to add files to TreeView - was a file removed?"); // Change to use a messagebox? GetFileSystemInfos can sometimes throw an exception when a file gets deleted.
                 }
+                TagDirectory.AllTagDirectories.AddRange(SubFolders); // Big collection of every item for matching - remember to add to this whenever a file is created
             }
-            */
+        }
+
+        public TagDirectoryItem(FileSystemInfo info)
+        {
+            FullPath = info.FullName;
+            Name = info.Name;
+            IsFile = !info.Attributes.HasFlag(FileAttributes.Directory);
+            DirectoryInfo dirinfo = new DirectoryInfo(info.FullName);
+            if (!IsFile)
+            {
+
+                foreach (FileSystemInfo fsinfo in dirinfo.GetFileSystemInfos())
+                {
+                    SubFolders.Add(new TagDirectoryItem(fsinfo, this));
+                }
+                TagDirectory.AllTagDirectories.AddRange(SubFolders); // Big collection of every item for matching - remember to add to this whenever a file is created
+            }
+        }
+
+        public void RefreshSubFolders()
+        {
+            SubFolders.Clear();
+            DirectoryInfo dirinfo = new DirectoryInfo(FullPath);
+            foreach (FileSystemInfo fsinfo in dirinfo.GetFileSystemInfos())
+            {
+                SubFolders.Add(new TagDirectoryItem(fsinfo, this));
+            }
         }
 
         public bool IsFile { get; set; }
-        public string FullPath { get; set; }
-        public TagDirectoryItem ParentItem { get; set; }
-        public ObservableCollection<TagDirectoryItem> SubFolders { get; set; } = new ObservableCollection<TagDirectoryItem>();
-
+        private string _FullPath;
+        public string FullPath
+        {
+            get
+            {
+                return _FullPath;
+            }
+            set
+            {
+                _FullPath = value;
+                OnPropertyChanged("FullPath");
+            }
+        }
         private string _Name;
         public string Name
         {
@@ -365,6 +419,9 @@ namespace PresentationODST
                 OnPropertyChanged("Name");
             }
         }
+        public TagDirectoryItem ParentItem { get; set; }
+
+        public ObservableCollection<TagDirectoryItem> SubFolders { get; set; } = new ObservableCollection<TagDirectoryItem>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -376,7 +433,7 @@ namespace PresentationODST
 
         public override string ToString()
         {
-            return _Name;
+            return Name;
         }
     }
     #endregion

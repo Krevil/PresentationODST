@@ -26,8 +26,8 @@ namespace PresentationODST.Controls.TagFieldControls
 
         }
 
-        private Bungie.Tags.TagFieldElementArraySingle _TagField;
-        public Bungie.Tags.TagFieldElementArraySingle TagField
+        private Bungie.Tags.TagFieldElementArray _TagField;
+        public Bungie.Tags.TagFieldElementArray TagField
         {
             get
             {

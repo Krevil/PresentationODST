@@ -25,6 +25,9 @@ namespace PresentationODST.Controls.TagFieldControls
             DataContext = this;
         }
 
+        private Bungie.Tags.TagFieldElementStringIDWithMenu _SubTagField;
+        public bool HasSubType = false;
+
         private Bungie.Tags.TagFieldElementStringID _TagField;
         public Bungie.Tags.TagFieldElementStringID TagField
         {
@@ -35,6 +38,11 @@ namespace PresentationODST.Controls.TagFieldControls
             set
             {
                 _TagField = value;
+                if (value.FieldSubtype == "sted")
+                {
+                    _SubTagField = (Bungie.Tags.TagFieldElementStringIDWithMenu)value;
+                    HasSubType = true;
+                }
                 ValueTextBox.Text = value.GetStringData();
                 NameTextBlock.Text = value.FieldName;
                 if (value.Units.Length > 0)
