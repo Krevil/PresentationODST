@@ -23,7 +23,7 @@ namespace PresentationODST.Utilities
 
         public static void AddNewRow(Grid grid, int rowindex)
         {
-            RowDefinition NewRow = new RowDefinition();
+            RowDefinition NewRow = new RowDefinition { Height  = new GridLength(1, GridUnitType.Auto) };
             grid.RowDefinitions.Add(NewRow);
             Grid.SetRow(grid.Children[rowindex], grid.RowDefinitions.IndexOf(NewRow));
         }
