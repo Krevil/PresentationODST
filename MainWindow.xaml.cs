@@ -39,8 +39,12 @@ namespace PresentationODST
             Main_Window = this;
             if (!InitializeProject())
             {
-                MessageBox.Show("Please navigate to your ODSTEK install folder.", "Startup", MessageBoxButton.OK);
+                MessageBox.Show("Please navigate to your HREK install folder.", "Startup", MessageBoxButton.OK);
                 Utilities.Path.SetODSTEKPath();
+                if (!InitializeProject())
+                {
+                    MessageBox.Show("Could not start ManagedBlam", "Error");
+                }
             }
         }
 
@@ -53,7 +57,8 @@ namespace PresentationODST
             else
             {
                 TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
-                Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
+                Bungie.ManagedBlamSystem.Start(Properties.Settings.Default.ODSTEKPath, default, new Bungie.ManagedBlamStartupParameters { InitializationLevel = Bungie.InitializationType.TagsOnly });
+                // will cause an exception upon exit with TagsOnly
                 return true;
             }
         }

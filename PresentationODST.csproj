@@ -78,8 +78,7 @@
   <ItemGroup>
     <Reference Include="ManagedBlam, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\H3ODSTEK\bin\ManagedBlam.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\HREK\bin\ManagedBlam.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Controls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="PresentationFramework" />

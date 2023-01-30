@@ -25,6 +25,7 @@ namespace PresentationODST.Utilities
                     MessageBox.Show("Please select a folder that contains a tags folder"); // Change this later after redoing the tag explorer
                     return;
                 }
+                ODSTEKTagsPath = fbg.SelectedPath + @"\tags\";
                 Properties.Settings.Default.ODSTEKPath = fbg.SelectedPath;
                 Properties.Settings.Default.Save();
             }

@@ -43,7 +43,12 @@ namespace PresentationODST.Controls.LayoutDocuments
             {
                 Properties.Settings.Default.ODSTEKPath = fbg.SelectedPath;
                 Properties.Settings.Default.Save();
-                MainWindow.Main_Window.InitializeProject();
+                #if DEBUG
+                    Application.Current.Shutdown();
+                #else
+                    Application.Current.Shutdown();
+                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                #endif
             }
         }
 

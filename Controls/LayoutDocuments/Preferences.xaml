@@ -35,7 +35,7 @@
             <CheckBox Grid.Row="3" Grid.Column="2" Content="Show the type of each field in a tag" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=FieldTypes, Mode=TwoWay}" Margin="2,2,-2,2"/>
             <TextBlock Grid.Row="4" Grid.Column="1" Text="Field Indices:" Margin="0,1,0,0" FontSize="14"/>
             <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Content="Show the indicies of fields where appropriate" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=ExtraIndices, Mode=TwoWay}" Margin="2,2,-2,2"/>
-            <TextBlock Grid.Row="5" Grid.Column="1" Text="ODSTEK Path:" Margin="0,1,0,0" FontSize="14"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="HREK Path:" Margin="0,1,0,0" FontSize="14"/>
             <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding Source={x:Static p:Settings.Default}, Path=ODSTEKPath, Mode=TwoWay}" IsReadOnly="True" Margin="2,1,0,0" Background="#FFE0E0E0" Width="222" HorizontalAlignment="Left" BorderBrush="Black"/>
             <Button Grid.Row="5" Grid.Column="3" Content="Browse..." Click="BrowseButton_Click" Margin="2,-1,0,-1" BorderBrush="Black"/>
         </Grid>
