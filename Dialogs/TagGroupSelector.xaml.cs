@@ -51,6 +51,20 @@ namespace PresentationODST.Dialogs
             DialogResult = true;
             Close();
         }
+
+        private void TagListBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            TagListBox.Focus();
+        }
+
+        private void TagListBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && TagListBox.SelectedIndex >= 0) 
+            {
+                DialogResult = true;
+                Close();
+            }
+        }
     }
         
     

@@ -21,7 +21,7 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}"/>
+        <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}" Foreground="Black"/>
         <ComboBox x:Name="ValueComboBox" Grid.Column="2" BorderBrush="Black" Background="#FFE0E0E0" SelectionChanged="ValueComboBox_SelectionChanged"/>
         <TextBlock x:Name="TypeTextBlock" Grid.Column="3" Background="{x:Null}"/>
     </Grid>

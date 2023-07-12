@@ -17,12 +17,17 @@ namespace PresentationODST.Controls.TagFieldControls
     /// <summary>
     /// Interaction logic for TagFieldEnumControl.xaml
     /// </summary>
-    public partial class TagFieldEnumControl : UserControl
+    public partial class TagFieldEnumControl : UserControl, ITagFieldControlBase
     {
         public TagFieldEnumControl()
         {
             InitializeComponent();
             DataContext = this;
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldEnum _TagField;
@@ -38,9 +43,9 @@ namespace PresentationODST.Controls.TagFieldControls
                 foreach (Bungie.Tags.TagValueEnumItem EnumItem in value.Items)
                 {
                     if (!Properties.Settings.Default.ExtraIndices) 
-                        ValueComboBox.Items.Add(EnumItem.EnumName);
+                        ValueComboBox.Items.Add(new TextBlock { Text = EnumItem.EnumName });
                     else
-                        ValueComboBox.Items.Add(EnumItem.EnumIndex + ". " + EnumItem.EnumName);
+                        ValueComboBox.Items.Add(new TextBlock { Text = EnumItem.EnumIndex + ". " + EnumItem.EnumName });
                 }
                 ValueComboBox.SelectedIndex = value.Value;
                 NameTextBlock.Text = value.FieldName;

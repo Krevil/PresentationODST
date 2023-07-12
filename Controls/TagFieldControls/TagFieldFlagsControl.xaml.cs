@@ -14,15 +14,17 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldFlagsControl.xaml
-    /// </summary>
-    public partial class TagFieldFlagsControl : UserControl
+    public partial class TagFieldFlagsControl : UserControl, ITagFieldControlBase
     {
         public TagFieldFlagsControl()
         {
             InitializeComponent();
             DataContext = this;
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldFlags _TagField;
@@ -39,7 +41,7 @@ namespace PresentationODST.Controls.TagFieldControls
                 {
                     CheckBox box = new CheckBox
                     {
-                        Content = flag.FlagName,
+                        Content = new TextBlock { Text = flag.FlagName },
                         IsChecked = _TagField.TestBit(flag.FlagName)
                     };
                     box.Click += new RoutedEventHandler(CheckBox_Click);
@@ -73,7 +75,7 @@ namespace PresentationODST.Controls.TagFieldControls
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            _TagField.SetBit(((CheckBox)sender).Content.ToString(), (bool)((CheckBox)sender).IsChecked);
+            _TagField.SetBit(((TextBlock)((CheckBox)sender).Content).Text, (bool)((CheckBox)sender).IsChecked);
         }
 
         private void ValueListBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)

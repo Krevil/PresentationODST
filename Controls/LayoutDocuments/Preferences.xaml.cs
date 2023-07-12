@@ -43,13 +43,40 @@ namespace PresentationODST.Controls.LayoutDocuments
             {
                 Properties.Settings.Default.ODSTEKPath = fbg.SelectedPath;
                 Properties.Settings.Default.Save();
-                MainWindow.Main_Window.InitializeProject();
             }
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.Save();
+        }
+
+        private void OutputWindowVisibility_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!((ComboBox)sender).IsLoaded) return;
+
+            switch (((ComboBox)sender).SelectedIndex)
+            {
+                case 0:
+                    MainWindow.Main_Window.MainGrid.RowDefinitions[3].Height = new GridLength(150);
+                    Properties.Settings.Default.OutputWindowHeight = 150;
+                    Properties.Settings.Default.ShowOutputWindow = Visibility.Visible;
+                    break;
+                case 1:
+                    MainWindow.Main_Window.MainGrid.RowDefinitions[3].Height = new GridLength(0);
+                    Properties.Settings.Default.OutputWindowHeight = 0;
+                    Properties.Settings.Default.ShowOutputWindow = Visibility.Collapsed;
+                    break;
+                default:
+                    break;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void OutputWindowVisibility_Initialized(object sender, EventArgs e)
+        {
+            ((ComboBox)sender).SelectedIndex = Properties.Settings.Default.ShowOutputWindow == Visibility.Visible ? 0 : 1;
         }
     }
 }

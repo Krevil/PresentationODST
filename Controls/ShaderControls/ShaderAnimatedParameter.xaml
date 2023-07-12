@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="PresentationODST.Controls.ShaderControls.ShaderAnimatedParameter"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PresentationODST.Controls.ShaderControls"
+             mc:Ignorable="d" 
+             d:DesignWidth="800">
+    <Grid Background="Gainsboro">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="#FFA0A0A0" BorderThickness="1" Grid.Column="0">
+            <TextBlock x:Name="FieldNameTextBox" Text="base_map_scale_uniform" TextAlignment="Right" Padding="0,0,1,2"/>
+        </Border>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" Grid.Row="0"/>
+        <Border BorderBrush="#FFA0A0A0" BorderThickness="1" Grid.Column="2">
+            <TextBlock x:Name="DefaultValueTextBox" Text="value: 0.00" TextAlignment="Center" Foreground="#FF6B6B6B"/>
+        </Border>
+        <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" Grid.Row="0"/>
+        <Border BorderBrush="#FFA0A0A0" BorderThickness="1" Grid.Column="4">
+            <TextBox x:Name="ValueTextBox" TextAlignment="Left" TextChanged="ValueTextBox_TextChanged"/>
+        </Border>
+    </Grid>
+</UserControl>

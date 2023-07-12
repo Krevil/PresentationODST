@@ -14,15 +14,17 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldStringIDControl.xaml
-    /// </summary>
-    public partial class TagFieldOldStringIDControl : UserControl
+    public partial class TagFieldOldStringIDControl : UserControl, ITagFieldControlBase
     {
         public TagFieldOldStringIDControl()
         {
             InitializeComponent();
             DataContext = this;
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldElementOldStringID _TagField;

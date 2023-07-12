@@ -20,5 +20,14 @@
     <Setting Name="TagExplorerWidth" Type="System.Double" Scope="User">
       <Value Profile="(Default)">250</Value>
     </Setting>
+    <Setting Name="OutputWindowHeight" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ShowOutputWindow" Type="System.Windows.Visibility" Scope="User">
+      <Value Profile="(Default)">Collapsed</Value>
+    </Setting>
+    <Setting Name="OpenTags" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

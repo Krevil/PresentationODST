@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="PresentationODST.Controls.Vectors.ChiefIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PresentationODST.Controls.Vectors"
+             mc:Ignorable="d" 
+             Width="256" Height="256">
+    <Grid>
+        <Path Data="M246,24.5 C246,32.508129 193.1696,39 128,39 C62.8304,39 10,32.508129 10,24.5 C10,16.491871 62.8304,10 128,10 C193.1696,10 246,16.491871 246,24.5 z" Fill="#FF315237" HorizontalAlignment="Center" Height="49" Stroke="#FF2A462F" Stretch="Fill" StrokeThickness="20" VerticalAlignment="Top" Width="256"/>
+        <Path Data="M107,0 L149,0 149,10.271966 150.65813,10.312378 C202.13803,11.749192 242.95592,17.994847 253.39949,25.969303 L253.43713,26 256,26 256,30 256,206.07507 255.37877,206.07507 255.4395,206.16943 199,242.52811 199,242.89043 198.43756,242.89043 198.26747,243 198.19695,242.89043 57,242.89043 57,242.47171 1.6797638,206.07507 0,206.07507 0,30 0,26 2.5628662,26 2.6005058,25.969303 C13.044086,17.994847 53.861973,11.749192 105.34187,10.312378 L107,10.271966 z" Fill="#FF315237" HorizontalAlignment="Center" Height="243" Stretch="Fill" VerticalAlignment="Top" Width="256"/>
+        <Path Data="M115.5,0 C177.29549,0 227.75626,12.184937 230.84972,27.507664 L230.92422,28.000001 231,28.000001 231,28.999999 231,76.5 231,77 230.9897,77 230.96228,78.332542 C229.38107,116.69783 178.29219,147.5 115.5,147.5 52.707813,147.5 1.618921,116.69783 0.037722826,78.332542 L0.010292053,77 0,77 0,76.5 0,28.999999 0,28.000001 0.075782061,28.000001 0.15028858,27.507664 C3.2437392,12.184937 53.704517,0 115.5,0 z" Fill="#FFF5AD43" HorizontalAlignment="Center" Height="148" Margin="0,52,0,0" Stretch="Fill" StrokeThickness="5" VerticalAlignment="Top" Width="231" Stroke="#FF3C3C3C"/>
+        <Path HorizontalAlignment="Left" Margin="96,189,0,0" VerticalAlignment="Top" Fill="#FF3C3C3C" Stretch="Fill" Width="61" Height="38" Data="M16.099761,0 L16.576358,0.28037274 16.931325,0.28037274 16.931325,0.48919406 52.325893,21.311108 52.294929,21.36575 52.534336,21.224913 60.999999,36.165451 57.8815,38 39.575679,30.829018 39.054405,29.909054 16.290334,16.517405 16.219232,16.517405 0,3.9006228 0,0.28037274 15.940896,0.28037274 z" RenderTransformOrigin="0.138781345759326,0.221023429091919">
+            <Path.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-30"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Path.RenderTransform>
+        </Path>
+    </Grid>
+</UserControl>

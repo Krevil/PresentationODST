@@ -21,27 +21,36 @@ using PresentationODST.Utilities;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Globalization;
+using PresentationODST.Dialogs;
 
 namespace PresentationODST
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    // TODO:
+    // Remember to change Chief back to the ODST when using that MB version
+    // Update block element titles when possible (ie when a name field gets added to an added block element)
+    // Add more info to block context menu - fix double entries?
+    // Implement tag mover/copyer
+    // Fix tag explorer adding new items
+    // Make empty tag blocks viewable
+    // More logging? Add clear logger button
+    // Run Tool menu
+    // Unsaved tags warning before shutdown
+    // Add something to show those annoying struct fields
+    // Launch scenario UI. Should be some stuff for this in ManagedBlam
+
     public partial class MainWindow : Window
     {
-        public static MainWindow Main_Window;
+        public static MainWindow Main_Window = (MainWindow)Application.Current.MainWindow;
         public static int NewTagCount = 1;
-        public static Dialogs.TagGroupSelector GroupSelector;
+        public static TagGroupSelector GroupSelector;
+        public static TagReopener Reopener;
+        public static ObservableCollection<TagSearchFile> AllTagFiles = new ObservableCollection<TagSearchFile>();
 
         public MainWindow()
         {
             InitializeComponent();
             Main_Window = this;
-            if (!InitializeProject())
-            {
-                MessageBox.Show("Please navigate to your ODSTEK install folder.", "Startup", MessageBoxButton.OK);
-                Utilities.Path.SetODSTEKPath();
-            }
         }
 
         public bool InitializeProject()
@@ -52,7 +61,18 @@ namespace PresentationODST
                 return false;
             else
             {
-                TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
+                TagExplorer.DataContext = new TagDirectory();
+                DirectoryInfo dirInfo = new DirectoryInfo(Utilities.Path.ODSTEKTagsPath);
+                List<TagSearchFile> tsfList = new List<TagSearchFile>();
+                foreach (FileInfo fi in dirInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList())
+                {
+                    tsfList.Add(new TagSearchFile(fi));
+                }
+                AllTagFiles = new ObservableCollection<TagSearchFile>(tsfList);
+                TagSearchListView.ItemsSource = new ObservableCollection<TagSearchFile>(tsfList);
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(TagSearchListView.ItemsSource);
+                view.Filter = TagSearchFilter;
+                
                 Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
                 return true;
             }
@@ -84,13 +104,13 @@ namespace PresentationODST
                 Title = "Preferences",
                 Content = new Preferences()
             };
-            LayoutDocumentPane ldp = TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
-            ldp.Children.Add(PreferencesTab);
-            ldp.SelectedContentIndex = ldp.IndexOfChild(PreferencesTab);
+            TagDocuments.Children.Add(PreferencesTab);
+            TagDocuments.SelectedContentIndex = TagDocuments.IndexOfChild(PreferencesTab);
         }
 
         private void CommandBinding_New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            //ManagedBlam.Shaders.NewShader();
             ManagedBlam.Tags.NewTag();
         }
 
@@ -118,16 +138,24 @@ namespace PresentationODST
 
         private void SaveFileAs_Click(object sender, RoutedEventArgs e)
         {
+            if (TagDocuments.Children.Count <= 0) return;
             if (TagDocuments.Children[TagDocuments.SelectedContentIndex].Content.GetType() != typeof(TagView)) return;
+            string fileExt = ((TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content).TagFile.Path.Extension;
             SaveFileDialog sfd = new SaveFileDialog
             {
-                InitialDirectory = Utilities.Path.ODSTEKTagsPath
+                InitialDirectory = Utilities.Path.ODSTEKTagsPath,
+                AddExtension = true,
+                DefaultExt = fileExt,
+                Filter = fileExt + "|*." + fileExt
             };
             if (sfd.ShowDialog() == true)
             {
                 string[] SavePath = Utilities.Path.GetTagsRelativePath(sfd.FileName).Split('.');
                 TagView SaveAsTagView = (TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
-                SaveAsTagView.SaveAs(Bungie.Tags.TagPath.FromPathAndExtension(SavePath[0], SavePath[1]));
+                Bungie.Tags.TagPath saveTagPath = Bungie.Tags.TagPath.FromPathAndExtension(SavePath[0], SavePath[1]);
+                SaveAsTagView.SaveAs(saveTagPath);
+                TagDocuments.Children[TagDocuments.SelectedContentIndex].Close();
+                ManagedBlam.Tags.OpenTag(sfd.FileName);
             }
         }
 
@@ -138,146 +166,231 @@ namespace PresentationODST
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Uri iconUri = new Uri("pack://application:,,,/PresentationODST.ico", UriKind.RelativeOrAbsolute);
+            // Why is this here? Because without it the application gets a low res version of the icon. Why does it do this? Who knows.
+            Uri iconUri = new Uri("pack://application:,,,/Images/ChiefIcon.ico", UriKind.RelativeOrAbsolute);
             Icon = BitmapFrame.Create(iconUri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
         }
 
         private void TagExplorerButton_DoubleClick(object sender, RoutedEventArgs e)
         {
-            ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((Button)sender).DataContext).FullPath);
+            if (((TagDirectoryItem)((Button)sender).DataContext).IsFile)
+                ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((Button)sender).DataContext).FullPath);
             //I feel like there must be a better way than doing all this casting?
         }
 
         private void TagExplorerButton_Click(object sender, RoutedEventArgs e)
         {
-            //((TreeViewItem)((Button)sender)).IsSelected = true;
+            //((TreeViewItem)((Button)sender).TemplatedParent).IsSelected = true;
         }
 
         private void GridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             Properties.Settings.Default.TagExplorerWidth = MainGrid.ColumnDefinitions[0].Width.Value;
+            Properties.Settings.Default.OutputWindowHeight = MainGrid.RowDefinitions[3].Height.Value;
             Properties.Settings.Default.Save();
         }
 
         private void TagExplorerContextMenu_Open_Click(object sender, RoutedEventArgs e)
         {
-            ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
+            if (((TagDirectoryItem)((MenuItem)sender).DataContext).IsFile)
+                ManagedBlam.Tags.OpenTag(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
         }
 
         private void TagExplorerContextMenu_Duplicate_Click(object sender, RoutedEventArgs e)
         {
-            
-            string FileName = ((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath;
-            Bungie.Tags.TagPath TagName = Bungie.Tags.TagPath.FromFilename(FileName);
-            string CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy." + TagName.Extension;
-            if (File.Exists(CopyPath))
+            if (((TagDirectoryItem)((MenuItem)sender).DataContext).IsFile)
             {
-                for (int i = 2; i < 250; i++) // No one is going to make over 250 copies of the same file, right? Consider this your free sanity check
+                string FileName = ((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath;
+                Bungie.Tags.TagPath TagName = Bungie.Tags.TagPath.FromFilename(FileName);
+                string CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy." + TagName.Extension;
+                if (File.Exists(CopyPath))
                 {
-                    if (File.Exists(Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension))
-                        continue;
-                    else
+                    for (int i = 2; i < 250; i++) // No one is going to make over 250 copies of the same file, right? Consider this your free sanity check
                     {
-                        CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension;
-                        break;
+                        if (File.Exists(Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension))
+                            continue;
+                        else
+                        {
+                            CopyPath = Utilities.Path.ODSTEKTagsPath + TagName.RelativePath + " - Copy (" + i + ")." + TagName.Extension;
+                            break;
+                        }
                     }
                 }
+                File.Copy(FileName, CopyPath);
             }
-            File.Copy(FileName, CopyPath);
+            else
+            {
+                // logic for folders
+            }
         }
 
         private void TagExplorerContextMenu_FileExplorer_Click(object sender, RoutedEventArgs e)
         {
-            string FolderPath = System.IO.Path.GetDirectoryName(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
+            string FolderPath;
+            if (((TagDirectoryItem)((MenuItem)sender).DataContext).IsFile)
+            {
+                FolderPath = System.IO.Path.GetDirectoryName(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
+            }
+            else
+            {
+                FolderPath = System.IO.Path.GetFullPath(((TagDirectoryItem)((MenuItem)sender).DataContext).FullPath);
+            }
             if (FolderPath == null || FolderPath == "") return;
             Process.Start("explorer.exe", FolderPath);
         }
 
         private void TagExplorerContextMenu_Delete_Click(object sender, RoutedEventArgs e)
         {
-            TagDirectoryItem DeletedFile = (TagDirectoryItem)((MenuItem)sender).DataContext;
-            if (!File.Exists(DeletedFile.FullPath)) return;
-            File.Delete(DeletedFile.FullPath);
-            //DeletedFile.ParentItem.SubFolders.Remove(DeletedFile); // should not need this as the watcher will handle it
+            if (((TagDirectoryItem)((MenuItem)sender).DataContext).IsFile)
+            {
+                TagDirectoryItem DeletedFile = (TagDirectoryItem)((MenuItem)sender).DataContext;
+                if (!File.Exists(DeletedFile.FullPath)) return;
+                File.Delete(DeletedFile.FullPath);
+                //DeletedFile.ParentItem.SubFolders.Remove(DeletedFile); // should not need this as the watcher will handle it
+            }
+            else
+            {
+                // logic for folders
+            }
         }
 
         private void TagExplorer_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.F5) return;
             ((TagDirectory)TagExplorer.DataContext).TagDirectories.Clear(); // maybe change this to a new TagDirectory()?
-            TagExplorer.DataContext = new TagDirectory(Utilities.Path.ODSTEKTagsPath);
+            TagExplorer.DataContext = new TagDirectory();
         }
 
         private void TagExplorerContextMenu_Rename_Click(object sender, RoutedEventArgs e)
         {
-            Dialogs.TagRenamer Renamer = new Dialogs.TagRenamer();
-            TagDirectoryItem ItemToRename = (TagDirectoryItem)((MenuItem)sender).DataContext;
-            string OriginalPath = ItemToRename.FullPath;
-            Renamer.NameTextBox.Text = ItemToRename.Name;
-            if (Renamer.ShowDialog() == true)
+            if (((TagDirectoryItem)((MenuItem)sender).DataContext).IsFile)
             {
-                ItemToRename.FullPath = ItemToRename.FullPath.Replace(ItemToRename.Name, Renamer.NameTextBox.Text);
-                ItemToRename.Name = Renamer.NameTextBox.Text;
-                File.Move(OriginalPath, ItemToRename.FullPath);
-            }
-        }
-
-        public static void NewTag()
-        {
-            GroupSelector = new Dialogs.TagGroupSelector();
-            if (GroupSelector.ShowDialog() == true)
-            {
-                LayoutDocumentPane ldp = Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
-                Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
-                Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)GroupSelector.TagListBox.SelectedItem;
-                Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + NewTagCount, SelectedItem.Extension);
-                NewTag.New(NewPath);
-                LayoutDocument TagTab = new LayoutDocument
+                TagRenamer Renamer = new TagRenamer();
+                TagDirectoryItem ItemToRename = (TagDirectoryItem)((MenuItem)sender).DataContext;
+                string OriginalPath = ItemToRename.FullPath;
+                Renamer.NameTextBox.Text = ItemToRename.Name;
+                if (Renamer.ShowDialog() == true)
                 {
-                    Title = "tag" + NewTagCount + "." + SelectedItem.Extension,
-                    Content = new TagView()
-                };
-                TagView NewTagView = (TagView)TagTab.Content;
-                NewTagView.TagFile = NewTag;
-                foreach (Bungie.Tags.TagField field in NewTag.Fields)
-                {
-                    ManagedBlam.Tags.AddFieldValues(NewTagView.TagGrid, field);
+                    ItemToRename.FullPath = ItemToRename.FullPath.Replace(ItemToRename.Name, Renamer.NameTextBox.Text);
+                    ItemToRename.Name = Renamer.NameTextBox.Text;
+                    File.Move(OriginalPath, ItemToRename.FullPath);
                 }
-                ldp.Children.Add(TagTab);
-                ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
-                NewTagCount++;
+            }
+            else
+            {
+
             }
         }
 
-        /*
+        private void RefreshExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            ((TagDirectory)TagExplorer.DataContext).TagDirectories.Clear();
+            TagExplorer.DataContext = new TagDirectory();
+        }
+
+        private void Window_Initialized(object sender, EventArgs e)
+        {
+            if (!InitializeProject())
+            {
+                MessageBox.Show("Please navigate to your editing kit root folder.", "Startup", MessageBoxButton.OK);
+                Utilities.Path.SetODSTEKPath();
+            }
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            // Replace code here to check if there are unsaved documents
+            if (TagDocuments.Children.Count <= 0)
+            {
+                e.Cancel = false;
+                return;
+            }
+            // Consider making a custom MessageBox control instead of using the default
+            MessageBoxResult cancelMsg = MessageBox.Show("Are you sure you want to exit the program?\nAny unsaved changes will be lost", "Exit", MessageBoxButton.OKCancel);
+            if (cancelMsg != MessageBoxResult.OK)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.OpenTags == null) return;
+            if (Properties.Settings.Default.OpenTags.Count <= 0) return;
+            Reopener = new TagReopener();
+            Reopener.Owner = Main_Window;
+            if (Reopener.ShowDialog() == true)
+            {
+                foreach (string tagPath in Reopener.TagsToOpen)
+                {
+                    try
+                    {
+                        ManagedBlam.Tags.OpenTag(tagPath);
+                    }
+                    catch
+                    {
+                        WPF.Log("Tag Reopener: Could not open tag {0}", tagPath);
+                    }
+                }
+            }
+        }
+
+        private void TagDock_DocumentClosed(object sender, Xceed.Wpf.AvalonDock.DocumentClosedEventArgs e)
+        {
+            if (e.Document.Content is TagView view)
+            {
+                ManagedBlam.Tags.OpenTags.Remove(view.TagFile);
+            }
+        }
+
+        private bool TagSearchFilter(object item)
+        {
+            if (SearchBar.Text.Length <= 0)
+                return false;
+            else
+                return (((TagSearchFile)item).Name + "." + ((TagSearchFile)item).TagInfo.Extension).Contains(SearchBar.Text);
+        }
+
         private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!IsLoaded) return;
-            foreach (UIElement item in TagExplorer.Items)
-            {
-                if (SearchBar.Text == "")
-                {
-                    item.Visibility = Visibility.Visible;
-                    continue;
-                }
-                if (!item.ToString().Contains(SearchBar.Text))
-                {
-                    item.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    item.Visibility = Visibility.Visible;
-                }
-            }
+            CollectionViewSource.GetDefaultView(TagSearchListView.ItemsSource).Refresh();
         }
-        */
+
+        private void TagSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            ManagedBlam.Tags.OpenTag(((Button)sender).ToolTip.ToString());
+        }
+
+        private void SearchBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TagExplorerPane.SelectedContentIndex = 1;
+        }
+
+        private void TagSearchExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            string FolderPath = System.IO.Path.GetFullPath(((TagSearchFile)((MenuItem)sender).DataContext).TagInfo.DirectoryName);
+            if (FolderPath == null || FolderPath == "") return;
+            Process.Start("explorer.exe", FolderPath);
+        }
     }
 
-    #region TreeView Malarky
+    public class TagSearchFile
+    {
+        public TagSearchFile(FileInfo fileInfo)
+        {
+            TagInfo = fileInfo;
+            TagPath = Utilities.Path.GetTagsRelativePath(TagInfo.FullName);
+            Name = fileInfo.Name;
+        }
+
+        public string Name { get; set; }
+        public FileInfo TagInfo { get; set; }
+        public string TagPath { get; set; }
+    }
 
     public class TagDirectory
     {
-        public TagDirectory(string dir)
+        public TagDirectory()
         {
             FileSystemWatcher watcher = new FileSystemWatcher
             {
@@ -293,7 +406,6 @@ namespace PresentationODST
             watcher.EnableRaisingEvents = true;
             DirectoryInfo TagsInfo = new DirectoryInfo(Properties.Settings.Default.ODSTEKPath + @"\tags");
             TagDirectories.Add(new TagDirectoryItem(TagsInfo));
-
             AllTagDirectories.AddRange(TagDirectories);
         }
 
@@ -302,7 +414,7 @@ namespace PresentationODST
 
         private void OnFileChanged(object source, FileSystemEventArgs e)
         {
-            Debug.WriteLine("{0}, with path {1} has been {2}", e.Name, e.FullPath, e.ChangeType);
+            Debug.WriteLine("Tag Explorer: {0}, with path {1} has been {2}", e.Name, e.FullPath, e.ChangeType);
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Deleted:
@@ -316,7 +428,10 @@ namespace PresentationODST
                 case WatcherChangeTypes.Created:
                     TagDirectoryItem ParentDir = AllTagDirectories.Find(x => x.FullPath == new DirectoryInfo(e.FullPath).Parent.FullName);
                     if (ParentDir == null)
+                    {
+                        Debug.WriteLine("Tag Explorer: Could not find parent of " + e.FullPath);
                         return;
+                    }
                     TagDirectoryItem CreatedDir = new TagDirectoryItem(new DirectoryInfo(e.FullPath), ParentDir);
                     Application.Current.Dispatcher.BeginInvoke(new Action(() => ParentDir.SubFolders.Add(CreatedDir)));
                     AllTagDirectories.Add(CreatedDir);
@@ -324,12 +439,11 @@ namespace PresentationODST
                 default:
                     break;
             }
-            
         }
 
         private void OnFileRenamed(object source, RenamedEventArgs e)
         {
-            Debug.WriteLine(" {0} renamed to {1}", e.OldFullPath, e.FullPath);
+            Debug.WriteLine("Tag Explorer: {0} renamed to {1}", e.OldFullPath, e.FullPath);
             TagDirectoryItem RenamedItem = AllTagDirectories.Find(x => x.FullPath == e.OldFullPath);
             if (RenamedItem == null)
                 return;
@@ -337,8 +451,7 @@ namespace PresentationODST
             RenamedItem.Name = e.Name;
         }
     }
-    // search hack idea: totally bypass everything and just hide the regular tag browser items and only show items using tagsinfo.getfilesysteminfos(user_search_string, SearchOptions.AllDirectories)
-    // treeviews may support filtering as a built in thing? look into that
+
     public class TagDirectoryItem : INotifyPropertyChanged
     {
         public TagDirectoryItem(FileSystemInfo info, TagDirectoryItem parent)
@@ -359,7 +472,7 @@ namespace PresentationODST
                 }
                 catch
                 {
-                    Debug.WriteLine("Failed to add files to TreeView - was a file removed?"); // Change to use a messagebox? GetFileSystemInfos can sometimes throw an exception when a file gets deleted.
+                    Debug.WriteLine("Tag Explorer: Failed to add files to TreeView - was a file removed?"); // Change to use a messagebox? GetFileSystemInfos can sometimes throw an exception when a file gets deleted.
                 }
                 TagDirectory.AllTagDirectories.AddRange(SubFolders); // Big collection of every item for matching - remember to add to this whenever a file is created
             }
@@ -419,6 +532,16 @@ namespace PresentationODST
                 OnPropertyChanged("Name");
             }
         }
+
+        public Visibility IsVisible
+        {
+            get
+            {
+                return IsFile == true ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+            
+
         public TagDirectoryItem ParentItem { get; set; }
 
         public ObservableCollection<TagDirectoryItem> SubFolders { get; set; } = new ObservableCollection<TagDirectoryItem>();
@@ -436,5 +559,25 @@ namespace PresentationODST
             return Name;
         }
     }
-    #endregion
+
+    // I copied most of this from stackexchange, need to research converters to properly understand how this functions
+    public class TagDirectoryConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            System.Collections.IList collection = value as System.Collections.IList;
+            ListCollectionView view = new ListCollectionView(collection);
+            SortDescription sd1 = new SortDescription(parameter.ToString(), ListSortDirection.Ascending);
+            SortDescription sd2 = new SortDescription("Name", ListSortDirection.Ascending);
+            view.SortDescriptions.Add(sd1);
+            view.SortDescriptions.Add(sd2);
+
+            return view;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
 }

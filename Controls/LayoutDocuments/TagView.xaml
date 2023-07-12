@@ -4,11 +4,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PresentationODST.Controls.LayoutDocuments"
+             xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <ScrollViewer>
-        <Grid x:Name="TagGrid" Background="#FFBDBDBD" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <Border Background="#FFBDBDBD" Width="5"/>
-        </Grid>
-    </ScrollViewer>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle Grid.Row="0" Grid.ColumnSpan="2" Fill="#FF949494"/>
+        <TextBlock x:Name="TagRelativePath" Text="" Padding="2,0,0,0" Height="20" Grid.Row="0" Grid.Column="0" Background="#FF949494"/>
+        <toolkit:WatermarkTextBox x:Name="TagSearchBox" Grid.Row="0" Grid.Column="1" Watermark="Search fields..." Background="#FFECECEC" Height="23" TextChanged="TagSearchBox_TextChanged"/>
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid x:Name="TagGrid" Background="#FFBDBDBD" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <Border Background="#FFBDBDBD" Width="5"/>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

@@ -28,7 +28,14 @@
             </TextBlock.ToolTip>
         </TextBlock>
         <TextBlock x:Name="NameTextBlock" Grid.Column="1" Text="Test" Background="{x:Null}"/>
-        <TextBox x:Name="ValueTextBox" Grid.Column="2" BorderBrush="Black" Text="" IsReadOnly="True" Background="#FFE0E0E0"/>
+        <TextBox x:Name="ValueTextBox" Grid.Column="2" BorderBrush="Black" Text="" IsReadOnly="True" Background="#FFE0E0E0">
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy Path" Click="CopyPath_Click"/>
+                    <MenuItem Header="Paste Path" Click="PastePath_Click"/>
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
         <Button x:Name="SelectTagButton" Grid.Column="4" Content="..." Click="SelectTagButton_Click"/>
         <Button x:Name="OpenTagButton" Grid.Column="6" Content="Open" Click="OpenTagButton_Click"/>
         <Button x:Name="ClearTagButton" Grid.Column="8" Content="Clear" Click="ClearTagButton_Click"/>

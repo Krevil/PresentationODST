@@ -11,7 +11,8 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="50"/> <!-- Change to be smaller? Or larger -->
+            <ColumnDefinition Width="50"/>
+            <!-- Change to be smaller? Or larger -->
             <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="65"/>
@@ -23,12 +24,30 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ContextMenu>
+            <ContextMenu x:Name="BlockContextMenu">
+            </ContextMenu>
+        </Grid.ContextMenu>
         <!-- Change this to an image instead of just a + character -->
         <Button x:Name="ExpandButton" Grid.Column="0" Height="20" Background="#FFB2B2B2" Foreground="Black" Click="ExpandButton_Click">
             <TextBlock x:Name="ExpandButtonTextBlock" Text="-" FontSize="20" Margin="0,-7,0,0"/>
         </Button>
         <TextBlock x:Name="NameTextBlock" Grid.Column="2" Text="Test" Height="20" Background="{x:Null}" Foreground="White"/>
-        <ComboBox x:Name="BlockListComboBox" Grid.Column="3" BorderBrush="Black" Text="5000" IsReadOnly="False" Height="20" Background="#FFE0E0E0" SelectionChanged="BlockListComboBox_SelectionChanged" Margin="0,0,0,0">
+        <Button x:Name="BlockOptionsButton" Grid.Column="3" HorizontalAlignment="Left" Margin="-30,0,0,0" Width="20" Height="20" Click="BlockOptionsButton_Click" Content="" FontFamily="Segoe MDL2 Assets">
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy element" Click="CopyElement_Click"/>
+                    <MenuItem Header="Replace element" Click="ReplaceElement_Click" x:Name="ReplaceElement"/>
+                    <MenuItem Header="Insert element" Click="InsertElement_Click" x:Name="InsertElement"/>
+                    <MenuItem Header="Append element" Click="AppendElement_Click" x:Name="AppendElement"/>
+                    <Separator/>
+                    <MenuItem Header="Copy entire block" Click="CopyBlock_Click"/>
+                    <MenuItem Header="Replace entire block" Click="ReplaceBlock_Click" x:Name="ReplaceBlock"/>
+                    <MenuItem Header="Append entire block" Click="AppendBlock_Click" x:Name="AppendBlock"/>
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
+        <ComboBox x:Name="BlockListComboBox" Grid.Column="3" BorderBrush="Black" Text="5000" IsReadOnly="False" Height="20" Background="#FFE0E0E0" SelectionChanged="BlockListComboBox_SelectionChanged">
 
         </ComboBox>
         <Grid x:Name="BlockGrid" Grid.Row="1" Grid.ColumnSpan="11" Background="#FFBDBDBD">

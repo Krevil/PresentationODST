@@ -14,15 +14,17 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldFlagsControl.xaml
-    /// </summary>
-    public partial class TagFieldBlockFlagsControl : UserControl
+    public partial class TagFieldBlockFlagsControl : UserControl, ITagFieldControlBase
     {
         public TagFieldBlockFlagsControl()
         {
             InitializeComponent();
             DataContext = this;
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldBlockFlags _TagField;
@@ -39,7 +41,7 @@ namespace PresentationODST.Controls.TagFieldControls
                 {
                     CheckBox box = new CheckBox
                     {
-                        Content = flag.FlagName,
+                        Content = new TextBlock { Text = flag.FlagName },
                         IsChecked = flag.IsSet
                     };
                     box.Click += new RoutedEventHandler(CheckBox_Click);

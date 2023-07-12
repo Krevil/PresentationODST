@@ -14,10 +14,7 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldStringIDControl.xaml
-    /// </summary>
-    public partial class TagFieldStringIDControl : UserControl
+    public partial class TagFieldStringIDControl : UserControl, ITagFieldControlBase
     {
         public TagFieldStringIDControl()
         {
@@ -25,7 +22,12 @@ namespace PresentationODST.Controls.TagFieldControls
             DataContext = this;
         }
 
-        private Bungie.Tags.TagFieldElementStringIDWithMenu _SubTagField;
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
+        }
+
+        private Bungie.Tags.TagFieldElementStringIDWithMenu _SubTagField; // I do not remember what this is for but it probably has something to do with the neat menus Guerilla has. Someone will have to remind me to go back to this later.
         public bool HasSubType = false;
 
         private Bungie.Tags.TagFieldElementStringID _TagField;

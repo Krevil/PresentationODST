@@ -11,7 +11,7 @@ using Xceed.Wpf.AvalonDock.Layout;
 
 namespace PresentationODST.ManagedBlam
 {
-    class Tags
+    public static class Tags
     {
         public static readonly Bungie.Tags.TagGroupType[] TagGroups = Bungie.Tags.TagGroupType.GetTagGroups();
         public static List<Bungie.Tags.TagFile> OpenTags = new List<Bungie.Tags.TagFile>();
@@ -31,16 +31,18 @@ namespace PresentationODST.ManagedBlam
                 return;
             }
             // Maybe stop users from opening the same tag more than once? Won't break anything by doing so, other than the user's fragile sanity
-            LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+            LayoutDocumentPane ldp = MainWindow.Main_Window.TagDocuments;
             Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile(OpenTagPath);
             
             LayoutDocument TagTab = new LayoutDocument
             {
-                Title = String.Join(".", OpenPath),
+                Title = NewTag.Path.ShortNameWithExtension,
                 Content = new TagView()
             };
             TagView NewTagView = (TagView)TagTab.Content;
             NewTagView.TagFile = NewTag;
+            NewTagView.TagRelativePath.Text = NewTag.Path.RelativePathWithExtension;
+            TagTab.ToolTip = new ToolTip { Content = OpenTagPath.RelativePathWithExtension };
             foreach (Bungie.Tags.TagField field in NewTag.Fields)
             {
                 AddFieldValues(NewTagView.TagGrid, field);
@@ -55,7 +57,7 @@ namespace PresentationODST.ManagedBlam
             MainWindow.GroupSelector = new Dialogs.TagGroupSelector();
             if (MainWindow.GroupSelector.ShowDialog() == true)
             {
-                LayoutDocumentPane ldp = MainWindow.Main_Window.TagDock.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+                LayoutDocumentPane ldp = MainWindow.Main_Window.TagDocuments;
                 Bungie.Tags.TagFile NewTag = new Bungie.Tags.TagFile();
                 Bungie.Tags.TagGroupType SelectedItem = (Bungie.Tags.TagGroupType)MainWindow.GroupSelector.TagListBox.SelectedItem;
                 Bungie.Tags.TagPath NewPath = Bungie.Tags.TagPath.FromPathAndExtension("tag" + MainWindow.NewTagCount, SelectedItem.Extension);
@@ -67,6 +69,7 @@ namespace PresentationODST.ManagedBlam
                 };
                 TagView NewTagView = (TagView)TagTab.Content;
                 NewTagView.TagFile = NewTag;
+                NewTagView.TagRelativePath.Text = NewTag.Path.RelativePathWithExtension;
                 foreach (Bungie.Tags.TagField field in NewTag.Fields)
                 {
                     AddFieldValues(NewTagView.TagGrid, field);
@@ -74,6 +77,7 @@ namespace PresentationODST.ManagedBlam
                 ldp.Children.Add(TagTab);
                 ldp.SelectedContentIndex = ldp.IndexOfChild(TagTab);
                 MainWindow.NewTagCount++;
+                OpenTags.Add(NewTag);
             }
         }
 
@@ -91,8 +95,7 @@ namespace PresentationODST.ManagedBlam
                 case Bungie.Tags.TagFieldType.LongInteger:
                 case Bungie.Tags.TagFieldType.Int64Integer:
                 case Bungie.Tags.TagFieldType.Real:
-                    Bungie.Tags.TagFieldElement Element = (Bungie.Tags.TagFieldElement)field;
-                    RowIndex = grid.Children.Add(new TagFieldElementControl { TagField = Element, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    RowIndex = grid.Children.Add(new TagFieldElementControl { TagField = (Bungie.Tags.TagFieldElement)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible) 
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
@@ -109,14 +112,12 @@ namespace PresentationODST.ManagedBlam
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
                 case Bungie.Tags.TagFieldType.Block:
-                    Bungie.Tags.TagFieldBlock TagBlock = (Bungie.Tags.TagFieldBlock)field;
-                    RowIndex = grid.Children.Add(new TagFieldBlockControl { TagField = TagBlock, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    RowIndex = grid.Children.Add(new TagFieldBlockControl { TagField = (Bungie.Tags.TagFieldBlock)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex);
                     break;
                 case Bungie.Tags.TagFieldType.Struct:
-                    Bungie.Tags.TagFieldStruct TagStruct = (Bungie.Tags.TagFieldStruct)field;
-                    foreach (Bungie.Tags.TagElement StructElement in TagStruct.Elements)
+                    foreach (Bungie.Tags.TagElement StructElement in ((Bungie.Tags.TagFieldStruct)field).Elements)
                     {
                         foreach (Bungie.Tags.TagField subfield in StructElement.Fields)
                         {
@@ -143,18 +144,16 @@ namespace PresentationODST.ManagedBlam
                 case Bungie.Tags.TagFieldType.ByteFlags:
                 case Bungie.Tags.TagFieldType.WordFlags:
                 case Bungie.Tags.TagFieldType.Flags:
-                    Bungie.Tags.TagFieldFlags Flags = (Bungie.Tags.TagFieldFlags)field;
-                    RowIndex = grid.Children.Add(new TagFieldFlagsControl { TagField = Flags, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    RowIndex = grid.Children.Add(new TagFieldFlagsControl { TagField = (Bungie.Tags.TagFieldFlags)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
-                        WPF.AddNewRow(grid, RowIndex, 29 + ((Flags.Items.Length - 1) * 19)); //flag fields size varies
+                        WPF.AddNewRow(grid, RowIndex, 29 + ((((Bungie.Tags.TagFieldFlags)field).Items.Length - 1) * 19)); //flag fields size varies
                     break;
                 case Bungie.Tags.TagFieldType.BlockFlags:
                 case Bungie.Tags.TagFieldType.ByteBlockFlags:
                 case Bungie.Tags.TagFieldType.WordBlockFlags:
-                    Bungie.Tags.TagFieldBlockFlags BlockFlags = (Bungie.Tags.TagFieldBlockFlags)field;
-                    RowIndex = grid.Children.Add(new TagFieldBlockFlagsControl { TagField = BlockFlags, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    RowIndex = grid.Children.Add(new TagFieldBlockFlagsControl { TagField = (Bungie.Tags.TagFieldBlockFlags)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
-                        WPF.AddNewRow(grid, RowIndex, 29 + ((BlockFlags.Items.Length - 1) * 19)); //flag fields size varies
+                        WPF.AddNewRow(grid, RowIndex, 29 + ((((Bungie.Tags.TagFieldBlockFlags)field).Items.Length - 1) * 19)); //flag fields size varies
                     break;
                 case Bungie.Tags.TagFieldType.ShortBlockIndexCustomSearch:
                 case Bungie.Tags.TagFieldType.CharBlockIndexCustomSearch:
@@ -167,8 +166,7 @@ namespace PresentationODST.ManagedBlam
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
                 case Bungie.Tags.TagFieldType.RealQuaternion:
-                    Bungie.Tags.TagFieldElementArray Element4d = (Bungie.Tags.TagFieldElementArray)field;
-                    RowIndex = grid.Children.Add(new TagFieldElement4dControl { TagField = Element4d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    RowIndex = grid.Children.Add(new TagFieldElement4dControl { TagField = (Bungie.Tags.TagFieldElementArray)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
@@ -176,8 +174,7 @@ namespace PresentationODST.ManagedBlam
                 case Bungie.Tags.TagFieldType.RealEulerAngles3d:
                 case Bungie.Tags.TagFieldType.RealPlane3d:
                 case Bungie.Tags.TagFieldType.RealPoint3d:
-                    Bungie.Tags.TagFieldElementArray Element3d = (Bungie.Tags.TagFieldElementArray)field;
-                    RowIndex = grid.Children.Add(new TagFieldElement3dControl { TagField = Element3d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    RowIndex = grid.Children.Add(new TagFieldElement3dControl { TagField = (Bungie.Tags.TagFieldElementArray)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
@@ -190,14 +187,39 @@ namespace PresentationODST.ManagedBlam
                 case Bungie.Tags.TagFieldType.Rectangle2d:
                 case Bungie.Tags.TagFieldType.RealFractionBounds:
                 case Bungie.Tags.TagFieldType.RealBounds:
-                    Bungie.Tags.TagFieldElementArray Element2d = (Bungie.Tags.TagFieldElementArray)field;
-                    RowIndex = grid.Children.Add(new TagFieldElement2dControl { TagField = Element2d, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                case Bungie.Tags.TagFieldType.ShortIntegerBounds:
+                    RowIndex = grid.Children.Add(new TagFieldElement2dControl { TagField = (Bungie.Tags.TagFieldElementArray)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
                     if (FieldVisible)
                         WPF.AddNewRow(grid, RowIndex, 31);
                     break;
+                case Bungie.Tags.TagFieldType.RealRgbColor:
+                case Bungie.Tags.TagFieldType.RgbPixel32:
+                    RowIndex = grid.Children.Add(new TagFieldElementRgbColorControl { TagField = (Bungie.Tags.TagFieldElementArray)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex, 31);
+                    break;
+                case Bungie.Tags.TagFieldType.ArgbPixel32:
+                case Bungie.Tags.TagFieldType.RealArgbColor:
+                    RowIndex = grid.Children.Add(new TagFieldElementArgbColorControl { TagField = (Bungie.Tags.TagFieldElementArray)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex, 31);
+                    break;
+                case Bungie.Tags.TagFieldType.Data:
+                    RowIndex = grid.Children.Add(new TagFieldDataControl { TagField = (Bungie.Tags.TagFieldData)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex, 106);
+                    break;
+                case Bungie.Tags.TagFieldType.Explanation:
+                    RowIndex = grid.Children.Add(new TagFieldExplanationControl { TagField = (Bungie.Tags.TagFieldExplanation)field, Visibility = WPF.ExpertModeVisibility(field) ? Visibility.Visible : Visibility.Collapsed });
+                    if (FieldVisible)
+                        WPF.AddNewRow(grid, RowIndex);
+                    break;
+                case Bungie.Tags.TagFieldType.Custom:
+                    // I don't think these are needed, at least not right now, as they appear to be used for special buttons within Guerilla - look into these when/if doing bitmap and/or model support
+                    //WPF.Log("Tag Loader: " + field.FieldType + " with the path " + field.FieldPath + " could not be added as they are not yet supported");
+                    break;
                 default:
-                    //System.Diagnostics.Debug.WriteLineIf(field.FieldName == "type", field.FieldType + " " + field.FieldSubtype);
-                    System.Diagnostics.Debug.WriteLine(field.FieldType + " could not be added to " + field.GetParentElement().ElementHeaderText + " as no case for the type exists");
+                    WPF.Log("Tag Loader: " + field.FieldType + " with the path " + field.FieldPath + " could not be added as no case for the type exists");
                     break;
             }
         }

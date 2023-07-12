@@ -5,17 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:avalon="http://schemas.xceed.com/wpf/xaml/avalondock"
-        xmlns:local="clr-namespace:PresentationODST" 
+        xmlns:local="clr-namespace:PresentationODST"
+        xmlns:td="clr-namespace:PresentationODST.Utilities"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:cv="clr-namespace:PresentationODST.Controls.Vectors"
         xmlns:p="clr-namespace:PresentationODST.Properties"
         mc:Ignorable="d"
-        Title="Presentation ODST" Loaded="Window_Loaded">
+        Title="Presentation" Loaded="Window_Loaded" Initialized="Window_Initialized" Closing="Window_Closing">
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="CommandBinding_Open_Executed"/>
         <CommandBinding Command="New" Executed="CommandBinding_New_Executed"/>
         <CommandBinding Command="Save" Executed="CommandBinding_Save_Executed"/>
     </Window.CommandBindings>
     <Window.Resources>
+        <local:TagDirectoryConverter x:Key="TagDirConverter"/>
         <Style TargetType="MenuItem">
             <Style.Triggers>
                 <Trigger Property="IsHighlighted" Value="True">
@@ -23,6 +26,41 @@
                     <Setter Property="BorderBrush" Value="#7F616161"/>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="border" Value="#FFBEE6FD"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="border" Value="#FFC4E5F6"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>
+                            </Trigger>
+                            <Trigger Property="ToggleButton.IsChecked" Value="True">
+                                <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                            </Trigger>
+                            <!-- Not wanted, disabled items here are just folders
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                                <Setter Property="Foreground" Value="#FF838383"/>
+                            </Trigger>
+                            -->
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <ControlTemplate x:Key="MenuItemControlTemplate" TargetType="{x:Type MenuItem}">
             <Border x:Name="templateRoot" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
@@ -74,36 +112,6 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
-        <ControlTemplate x:Key="TagExplorerButtonControlTemplate" TargetType="{x:Type Button}">
-            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                <!-- Set RecognizesAccessKey to false so that we can use underscores without any hassle -->
-                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="False" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-            </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsDefaulted" Value="True">
-                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                </Trigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" TargetName="border" Value="#FFBEE6FD"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" TargetName="border" Value="#FFC4E5F6"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>
-                </Trigger>
-                <Trigger Property="ToggleButton.IsChecked" Value="True">
-                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
-                </Trigger>
-                <!-- Not wanted, disabled items here are just folders
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
-                    <Setter Property="Foreground" Value="#FF838383"/>
-                </Trigger>
-                -->
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
     </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
@@ -114,8 +122,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{Binding Source={x:Static p:Settings.Default}, Path=OutputWindowHeight, Mode=OneTime}"/>
         </Grid.RowDefinitions>
         <GridSplitter Grid.Column="1" Grid.Row="1" Width="5" ResizeBehavior="PreviousAndNext" DragCompleted="GridSplitter_DragCompleted"/>
+        <GridSplitter Grid.Column="2" Grid.Row="2" Height="5" ResizeBehavior="PreviousAndNext" DragCompleted="GridSplitter_DragCompleted" HorizontalAlignment="Stretch" Visibility="{Binding Source={x:Static p:Settings.Default}, Path=ShowOutputWindow, Mode=OneWay}"/>
         <Menu Height="20" Grid.ColumnSpan="4" Grid.Row="0" Background="#FF292929" >
             <MenuItem Header="File" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
                 <MenuItem Command="New" Header="New..." x:Name="NewFile" BorderThickness="0" />
@@ -126,34 +137,84 @@
             </MenuItem>
             <MenuItem Header="Edit" Height="20" Width="35" Foreground="White" Background="#FF131313" Template="{DynamicResource MenuItemControlTemplate}" BorderThickness="0">
                 <MenuItem Header="Preferences" Click="Preferences_Click"/>
+                <MenuItem Header="Refresh Explorer" Click="RefreshExplorer_Click"/>
             </MenuItem>
         </Menu>
-        <Grid  Grid.Row="1" Grid.Column="0">
+        <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <!-- <TextBox x:Name="SearchBar" Text="Search..." Grid.Row="0" TextChanged="SearchBar_TextChanged"/> -->
-            <TreeView x:Name="TagExplorer" Grid.Row="1" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}" PreviewKeyDown="TagExplorer_PreviewKeyDown">
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate ItemsSource="{Binding SubFolders, Mode=TwoWay}" DataType="{x:Type local:TagDirectoryItem}">
-                        <Button Content="{Binding Name}" Background="{x:Null}" BorderBrush="{x:Null}" Click="TagExplorerButton_Click" MouseDoubleClick="TagExplorerButton_DoubleClick" IsEnabled="{Binding IsFile}" Template="{DynamicResource TagExplorerButtonControlTemplate}">
-                            <Button.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Open" Click="TagExplorerContextMenu_Open_Click"/>
-                                    <MenuItem Header="Duplicate" Click="TagExplorerContextMenu_Duplicate_Click"/>
-                                    <MenuItem Header="Rename" Click="TagExplorerContextMenu_Rename_Click"/>
-                                    <MenuItem Header="Delete" Click="TagExplorerContextMenu_Delete_Click"/>
-                                    <MenuItem Header="Open in Explorer" Click="TagExplorerContextMenu_FileExplorer_Click"/>
-                                </ContextMenu>
-                            </Button.ContextMenu>
-                        </Button>
-                    </HierarchicalDataTemplate>
-                </TreeView.Resources>
-            </TreeView>
+            <toolkit:WatermarkTextBox x:Name="SearchBar" Watermark="Search..." TextChanged="SearchBar_TextChanged" Grid.Row="0" FontSize="16" Background="Gainsboro" GotFocus="SearchBar_GotFocus"/>
+            <avalon:DockingManager x:Name="TagExplorerDock" Grid.Row="1" Background="#FFECECEC">
+                <avalon:LayoutRoot>
+                    <avalon:LayoutRoot.LeftSide>
+                        <avalon:LayoutAnchorSide/>
+                    </avalon:LayoutRoot.LeftSide>
+                    <avalon:LayoutPanel>
+                        <avalon:LayoutDocumentPaneGroup>
+                            <avalon:LayoutDocumentPane x:Name="TagExplorerPane" CanRepositionItems="False" AllowDuplicateContent="False">
+                                <avalon:LayoutDocument x:Name="TagExplorerDocument" Title="Tag Explorer" CanClose="False" CanFloat="False" CanMove="False">
+                                    <TreeView x:Name="TagExplorer" Grid.Row="1" Background="#FFEEEEEE" ItemsSource="{Binding TagDirectories}" PreviewKeyDown="TagExplorer_PreviewKeyDown">
+                                        <TreeView.Resources>
+                                            <HierarchicalDataTemplate ItemsSource="{Binding SubFolders, Mode=TwoWay, Converter={StaticResource TagDirConverter}, ConverterParameter=IsFile}" DataType="{x:Type local:TagDirectoryItem}">
+                                                <Button Background="{x:Null}" BorderBrush="{x:Null}" Click="TagExplorerButton_Click" MouseDoubleClick="TagExplorerButton_DoubleClick">
+                                                    <Button.Content>
+                                                        <TextBlock Text="{Binding Name}"/>
+                                                    </Button.Content>
+                                                    <Button.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem Header="Open" Click="TagExplorerContextMenu_Open_Click"  Visibility="{Binding IsVisible}"/>
+                                                            <Separator Visibility="{Binding IsVisible}"/>
+                                                            <MenuItem Header="Duplicate" Click="TagExplorerContextMenu_Duplicate_Click" Visibility="{Binding IsVisible}"/>
+                                                            <MenuItem Header="Rename" Click="TagExplorerContextMenu_Rename_Click" Visibility="{Binding IsVisible}"/>
+                                                            <MenuItem Header="Delete" Click="TagExplorerContextMenu_Delete_Click" Visibility="{Binding IsVisible}"/>
+                                                            <MenuItem Header="Open in Explorer" Click="TagExplorerContextMenu_FileExplorer_Click"/>
+                                                        </ContextMenu>
+                                                    </Button.ContextMenu>
+                                                </Button>
+                                            </HierarchicalDataTemplate>
+                                        </TreeView.Resources>
+                                    </TreeView>
+                                </avalon:LayoutDocument>
+                                <avalon:LayoutDocument x:Name="TagSearchDocument" Title="Tag Search" CanClose="False" CanFloat="False" CanMove="False">
+                                    <ListView x:Name="TagSearchListView">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Setter Property="BorderThickness" Value="0"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button ToolTip="{Binding TagPath}" MouseDoubleClick="TagSearchButton_Click" Background="#00000000" BorderBrush="#00000000">
+                                                    <Button.Content>
+                                                        <TextBlock Text="{Binding Name}">
+                                                            <TextBlock.ContextMenu>
+                                                                <ContextMenu>
+                                                                    <MenuItem Header="Open" Click="TagSearchButton_Click"/>
+                                                                    <MenuItem Header="Open in Explorer" Click="TagSearchExplorer_Click"/>
+                                                                </ContextMenu>
+                                                            </TextBlock.ContextMenu>
+                                                        </TextBlock>
+                                                    </Button.Content>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </avalon:LayoutDocument>
+                            </avalon:LayoutDocumentPane>
+                        </avalon:LayoutDocumentPaneGroup>
+                    </avalon:LayoutPanel>
+                </avalon:LayoutRoot>
+            </avalon:DockingManager>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="2" Background="#FFB6B6B6">
-            <cv:ODSTIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5">
+            <cv:ODSTIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5" x:Name="ODSTIcon" Visibility="Collapsed">
                 <cv:ODSTIcon.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
@@ -163,7 +224,17 @@
                     </TransformGroup>
                 </cv:ODSTIcon.RenderTransform>
             </cv:ODSTIcon>
-            <avalon:DockingManager x:Name="TagDock" Background="{x:Null}">
+            <cv:ChiefIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5" Foreground="{x:Null}" x:Name="ChiefIcon" Visibility="Visible">
+                <cv:ChiefIcon.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </cv:ChiefIcon.RenderTransform>
+            </cv:ChiefIcon>
+            <avalon:DockingManager x:Name="TagDock" Background="{x:Null}" DocumentClosed="TagDock_DocumentClosed">
                 <avalon:LayoutRoot>
                     <avalon:LayoutRoot.LeftSide>
                         <avalon:LayoutAnchorSide/>
@@ -175,6 +246,17 @@
                     </avalon:LayoutPanel>
                 </avalon:LayoutRoot>
             </avalon:DockingManager>
+        </Grid>
+
+        <Grid Visibility="{Binding Source={x:Static p:Settings.Default}, Path=ShowOutputWindow, Mode=OneWay}" Grid.Column="2" Grid.Row="3" Background="#FFDADADA" Loaded="Grid_Loaded">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Console" Grid.Row="0" FontSize="12" FontFamily="Consolas" FontWeight="Bold"/>
+            <Rectangle Grid.Row="0" Fill="#66717171"/>
+            <Separator Grid.Row="0" Height="3" VerticalAlignment="Top" Margin="0,14,0,0" Grid.RowSpan="2"/>
+            <TextBox x:Name="OutputWindowTextBlock" Grid.Row="2" Text="" FontFamily="Segoe UI" FontSize="12" IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" VerticalScrollBarVisibility="Visible"/>
         </Grid>
     </Grid>
 </Window>

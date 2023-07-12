@@ -14,16 +14,18 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldElement.xaml
-    /// </summary>
-    public partial class TagFieldElement2dControl : UserControl
+    public partial class TagFieldElement2dControl : UserControl, ITagFieldControlBase
     {
         public TagFieldElement2dControl()
         {
             InitializeComponent();
             DataContext = this;
 
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldElementArray _TagField;
@@ -73,6 +75,7 @@ namespace PresentationODST.Controls.TagFieldControls
                     case Bungie.Tags.TagFieldType.RealFractionBounds:
                     case Bungie.Tags.TagFieldType.RealBounds:
                     case Bungie.Tags.TagFieldType.AngleBounds:
+                    case Bungie.Tags.TagFieldType.ShortIntegerBounds:
                         Value1TypeTextBlock.Text = "";
                         Value2TypeTextBlock.Text = "to";
                         break;

@@ -14,16 +14,18 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldElement.xaml
-    /// </summary>
-    public partial class TagFieldElement4dControl : UserControl
+    public partial class TagFieldElement4dControl : UserControl, ITagFieldControlBase
     {
         public TagFieldElement4dControl()
         {
             InitializeComponent();
             DataContext = this;
 
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldElementArray _TagField;

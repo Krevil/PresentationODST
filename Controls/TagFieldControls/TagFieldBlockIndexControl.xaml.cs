@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PresentationODST.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,15 +15,17 @@ using System.Windows.Shapes;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
-    /// <summary>
-    /// Interaction logic for TagFieldEnumControl.xaml
-    /// </summary>
-    public partial class TagFieldBlockIndexControl : UserControl
+    public partial class TagFieldBlockIndexControl : UserControl, ITagFieldControlBase
     {
         public TagFieldBlockIndexControl()
         {
             InitializeComponent();
             DataContext = this;
+        }
+
+        public Bungie.Tags.TagField GetTagField()
+        {
+            return _TagField;
         }
 
         private Bungie.Tags.TagFieldBlockIndex _TagField;
@@ -37,9 +40,9 @@ namespace PresentationODST.Controls.TagFieldControls
                 _TagField = value;
                 foreach (Bungie.Tags.TagFieldBlockIndex.TagFieldBlockIndexItem IndexItem in value.Items)
                 {
-                    ValueComboBox.Items.Add(IndexItem.BlockIndexName);
+                    ValueComboBox.Items.Add(new TextBlock { Text = IndexItem.BlockIndexName });
                 }
-                ValueComboBox.SelectedIndex = value.Value + 1; // I do not like this one bit
+                ValueComboBox.SelectedIndex = TagField.Value + 1; // I do not like this one bit
                 NameTextBlock.Text = value.FieldName;
                 if (value.Units.Length > 0)
                 {

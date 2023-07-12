@@ -21,7 +21,7 @@
             <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="90"/>
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="TagListBox" Width="375" Height="315" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFCBCBCB" ItemsSource="{Binding TagGroups}">
+        <ListBox x:Name="TagListBox" Width="375" Height="315" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFCBCBCB" ItemsSource="{Binding TagGroups}" PreviewKeyDown="TagListBox_PreviewKeyDown" TextSearch.TextPath="Extension" Loaded="TagListBox_Loaded">
             <!-- Keeping the template for now in case it's needed - Krevil 06/10/22 -->
             <ListBox.ItemTemplate>
                 <DataTemplate>
