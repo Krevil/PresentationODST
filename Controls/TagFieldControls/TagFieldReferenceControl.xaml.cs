@@ -74,7 +74,7 @@ namespace PresentationODST.Controls.TagFieldControls
             ValueTextBox.Foreground = ValidFile ? Utilities.WPF.BlackBrush : Utilities.WPF.RedBrush;
             OpenTagButton.IsEnabled = ValidFile;
             ClearTagButton.IsEnabled = PointsSomewhere;
-            
+            ValueTextBox.ToolTip = PointsSomewhere ? TagField.Reference.Path.RelativePathWithExtension : "";
         }
 
         private void GetValidGroups()
