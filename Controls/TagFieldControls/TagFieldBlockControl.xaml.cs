@@ -186,10 +186,18 @@ namespace PresentationODST.Controls.TagFieldControls
             if (BlockListComboBox.Items[0].ToString() == "NONE" && _TagField.Elements.Count == 0) return;
             int CurrentIndex = BlockListComboBox.SelectedIndex;
             if ((_TagField.Elements.Count - 1) < CurrentIndex) return;
+            if (CurrentIndex < 0)
+            {
+                BlockListComboBox.SelectedIndex = 0;
+                return;
+            }
             _TagField.RemoveElement(CurrentIndex);
             RefreshBlock();
             if (_TagField.Elements.Count <= 0) return; // Yes we do need this twice this is not an erroneous duplicate
-            BlockListComboBox.SelectedIndex = CurrentIndex - 1;
+            if (_TagField.Elements.Count > 1)
+            {
+                BlockListComboBox.SelectedIndex = CurrentIndex - 1;
+            }  
         }
 
         private void DeleteAllButton_Click(object sender, RoutedEventArgs e)

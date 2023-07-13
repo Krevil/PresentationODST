@@ -167,7 +167,7 @@ namespace PresentationODST
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Why is this here? Because without it the application gets a low res version of the icon. Why does it do this? Who knows.
-            Uri iconUri = new Uri("pack://application:,,,/Images/ChiefIcon.ico", UriKind.RelativeOrAbsolute);
+            Uri iconUri = new Uri("pack://application:,,,/Images/ODSTIcon.ico", UriKind.RelativeOrAbsolute);
             Icon = BitmapFrame.Create(iconUri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
         }
 

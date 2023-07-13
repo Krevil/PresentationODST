@@ -214,7 +214,7 @@
             </avalon:DockingManager>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="2" Background="#FFB6B6B6">
-            <cv:ODSTIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5" x:Name="ODSTIcon" Visibility="Collapsed">
+            <cv:ODSTIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5" x:Name="ODSTIcon" Visibility="Visible">
                 <cv:ODSTIcon.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
@@ -224,7 +224,7 @@
                     </TransformGroup>
                 </cv:ODSTIcon.RenderTransform>
             </cv:ODSTIcon>
-            <cv:ChiefIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5" Foreground="{x:Null}" x:Name="ChiefIcon" Visibility="Visible">
+            <cv:ChiefIcon Height="256" Width="256" RenderTransformOrigin="0.5,0.5" Foreground="{x:Null}" x:Name="ChiefIcon" Visibility="Collapsed">
                 <cv:ChiefIcon.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>

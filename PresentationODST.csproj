@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.1.0.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -83,7 +83,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\ChiefIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Images\ODSTIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -578,10 +578,10 @@
     <Resource Include="Images\ODSTIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\ODSTSplash.png" />
+    <SplashScreen Include="Images\ODSTSplash.png" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Images\ChiefSplash.png" />
+    <Resource Include="Images\ChiefSplash.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ChiefIcon.ico" />
