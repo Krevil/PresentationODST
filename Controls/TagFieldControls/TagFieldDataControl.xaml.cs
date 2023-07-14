@@ -44,6 +44,11 @@ namespace PresentationODST.Controls.TagFieldControls
                 {
                     ValueTextBox.Text = value.DataAsText;
                 }
+                else if (value.File.Path.Extension == "multilingual_unicode_string_list")
+                {
+                    // this is the data field in a strings file, so it is text but isn't editable as text. kinda weird, need to figure this out properly at some point
+                    ValueTextBox.Text = Encoding.UTF8.GetString(value.GetData());
+                }
                 else
                 {
                     ValueTextBox.Text = Convert.ToBase64String(value.GetData());
@@ -61,7 +66,7 @@ namespace PresentationODST.Controls.TagFieldControls
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!IsLoaded) return;
-            if (_TagField.IsEditableAsText)
+            if (_TagField.IsEditableAsText || TagField.File.Path.Extension == "multilingual_unicode_string_list")
             {
                 _TagField.SetData(Encoding.UTF8.GetBytes(ValueTextBox.Text));
             }
