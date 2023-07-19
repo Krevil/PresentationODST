@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Windows;
 
 namespace PresentationODST.Utilities
@@ -9,6 +10,10 @@ namespace PresentationODST.Utilities
         {
             if (path.Contains(Properties.Settings.Default.ODSTEKPath))
                 return path.Substring(Properties.Settings.Default.ODSTEKPath.Length + 6);
+            else if (path.Contains("tags"))
+            {
+                return path.Substring(path.IndexOf("tags") + 5);
+            }
             else
             {
                 return path;

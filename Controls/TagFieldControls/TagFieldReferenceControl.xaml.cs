@@ -117,6 +117,11 @@ namespace PresentationODST.Controls.TagFieldControls
             };
             if (ofd.ShowDialog() == true)
             {
+                if (!ofd.FileName.Contains(Properties.Settings.Default.ODSTEKPath))
+                {
+                    MessageBox.Show("The file you selected isn't within your current editing kit's tags folder", "You need to set your working directory");
+                    return;
+                }
                 ValueTextBox.Text = Utilities.Path.GetTagsRelativePath(ofd.FileName);
                 TagField.Reference.Path = Bungie.Tags.TagPath.FromPathAndExtension(ValueTextBox.Text.Split('.')[0], ValueTextBox.Text.Split('.')[1]);
                 ValidateValueText();
