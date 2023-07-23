@@ -27,7 +27,7 @@ namespace PresentationODST.Dialogs
         {
             if (!NameTextBox.Text.Contains("."))
             {
-                MessageBox.Show("Tag name should contain an extension");
+                CustomMessageBox.Show("Tag name should contain an extension");
                 return;
             }
             DialogResult = true;

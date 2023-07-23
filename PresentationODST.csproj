@@ -375,6 +375,9 @@
     <Compile Include="Controls\Vectors\ODSTIcon.xaml.cs">
       <DependentUpon>ODSTIcon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\CustomMessageBox.xaml.cs">
+      <DependentUpon>CustomMessageBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\TagReopener.xaml.cs">
       <DependentUpon>TagReopener.xaml</DependentUpon>
     </Compile>
@@ -500,6 +503,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\CustomMessageBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\TagReopener.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -575,10 +582,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\ODSTIcon.ico" />
+    <SplashScreen Include="Images\ODSTIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Images\ODSTSplash.png" />
+    <Resource Include="Images\ODSTSplash.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ChiefSplash.png" />

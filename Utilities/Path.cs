@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using PresentationODST.Dialogs;
 
 namespace PresentationODST.Utilities
 {
@@ -29,7 +30,7 @@ namespace PresentationODST.Utilities
             {
                 if (!Directory.Exists(fbg.SelectedPath + @"\tags"))
                 {
-                    MessageBox.Show("Please select a folder that contains a tags folder"); // Change this later after redoing the tag explorer
+                    CustomMessageBox.Show("Please select a folder that contains a tags folder"); // Change this later after redoing the tag explorer
                     return;
                 }
                 Properties.Settings.Default.ODSTEKPath = fbg.SelectedPath;
@@ -44,7 +45,7 @@ namespace PresentationODST.Utilities
             }
             else
             {
-                MessageBox.Show("Path not found, please try again.", "Error");
+                CustomMessageBox.Show("Path not found, please try again.", "Error");
             }
         }
     }

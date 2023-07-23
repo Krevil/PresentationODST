@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using PresentationODST.Utilities;
+using PresentationODST.Dialogs;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
@@ -119,7 +120,7 @@ namespace PresentationODST.Controls.TagFieldControls
             {
                 if (!ofd.FileName.Contains(Properties.Settings.Default.ODSTEKPath))
                 {
-                    MessageBox.Show("The file you selected isn't within your current editing kit's tags folder", "You need to set your working directory");
+                    CustomMessageBox.Show("The file you selected isn't within your current editing kit's tags folder", "You need to set your working directory");
                     return;
                 }
                 ValueTextBox.Text = Utilities.Path.GetTagsRelativePath(ofd.FileName);

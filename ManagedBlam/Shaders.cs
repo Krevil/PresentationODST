@@ -11,6 +11,7 @@ using Xceed.Wpf.AvalonDock.Layout;
 using PresentationODST.Controls.ShaderControls;
 using System.Windows.Media.Media3D;
 using System.Diagnostics;
+using PresentationODST.Dialogs;
 
 namespace PresentationODST.ManagedBlam
 {
@@ -24,13 +25,13 @@ namespace PresentationODST.ManagedBlam
             string[] OpenPath = Path.GetTagsRelativePath(filename).Split('.');
             if (Bungie.Tags.TagGroupType.GetGroupTypeFromExtension(OpenPath[1]) == null)
             {
-                MessageBox.Show("Unsupported file type", "Tag Load Error");
+                CustomMessageBox.Show("Unsupported file type", "Tag Load Error");
                 return;
             }
             Bungie.Tags.TagPath OpenTagPath = Bungie.Tags.TagPath.FromPathAndExtension(OpenPath[0], OpenPath[1]);
             if (!System.IO.File.Exists(Path.ODSTEKTagsPath + OpenTagPath.RelativePathWithExtension))
             {
-                MessageBox.Show("Couldn't find tag file", "Tag Load Error");
+                CustomMessageBox.Show("Couldn't find tag file", "Tag Load Error");
                 return;
             }
             // Maybe stop users from opening the same tag more than once? Won't break anything by doing so, other than the user's fragile sanity

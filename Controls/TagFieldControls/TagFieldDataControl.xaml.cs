@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PresentationODST.Dialogs;
 
 namespace PresentationODST.Controls.TagFieldControls
 {
@@ -79,7 +80,7 @@ namespace PresentationODST.Controls.TagFieldControls
                 }
                 catch
                 {
-                    MessageBox.Show("Could not parse string as Base64", "Error");
+                    CustomMessageBox.Show("Could not parse string as Base64", "Error");
                     return;
                 }
                 _TagField.SetData(newValue);

@@ -53,29 +53,38 @@ namespace PresentationODST
             Main_Window = this;
         }
 
-        public bool InitializeProject()
+        public void InitializeProject()
         {
-            if (Properties.Settings.Default.ODSTEKPath.Length <= 0)
-                return false;
-            else if (!Directory.Exists(Properties.Settings.Default.ODSTEKPath + @"\tags"))
-                return false;
-            else
+            string ProjectDir = Properties.Settings.Default.ODSTEKPath.Length <= 0 ? Directory.GetCurrentDirectory() : Properties.Settings.Default.ODSTEKPath;
+            
+            if (!Directory.Exists(ProjectDir + "\\tags"))
             {
-                TagExplorer.DataContext = new TagDirectory();
-                DirectoryInfo dirInfo = new DirectoryInfo(Utilities.Path.ODSTEKTagsPath);
-                List<TagSearchFile> tsfList = new List<TagSearchFile>();
-                foreach (FileInfo fi in dirInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList())
+                if (CustomMessageBox.Show("Couldn't find a tags folder in your editing kit directory. Set custom editing kit path?", "Error", CustomMessageBox.ButtonType.YesNo) == true)
                 {
-                    tsfList.Add(new TagSearchFile(fi));
+                    Utilities.Path.SetODSTEKPath();
                 }
-                AllTagFiles = new ObservableCollection<TagSearchFile>(tsfList);
-                TagSearchListView.ItemsSource = new ObservableCollection<TagSearchFile>(tsfList);
-                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(TagSearchListView.ItemsSource);
-                view.Filter = TagSearchFilter;
-                
-                Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);
-                return true;
+                Application.Current.Shutdown();
+                return;
             }
+            else if (Properties.Settings.Default.ODSTEKPath.Length <= 0) // if this is first launch from the EK directory, set the path and save it
+            {
+                Properties.Settings.Default.ODSTEKPath = ProjectDir;
+                Properties.Settings.Default.Save();
+            }
+
+            TagExplorer.DataContext = new TagDirectory();
+            DirectoryInfo dirInfo = new DirectoryInfo(Utilities.Path.ODSTEKTagsPath);
+            List<TagSearchFile> tsfList = new List<TagSearchFile>();
+            foreach (FileInfo fi in dirInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList())
+            {
+                tsfList.Add(new TagSearchFile(fi));
+            }
+            AllTagFiles = new ObservableCollection<TagSearchFile>(tsfList);
+            TagSearchListView.ItemsSource = new ObservableCollection<TagSearchFile>(tsfList);
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(TagSearchListView.ItemsSource);
+            view.Filter = TagSearchFilter;
+
+            Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);          
         }
 
         private void CommandBinding_Open_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -88,7 +97,7 @@ namespace PresentationODST
             {
                 if (!ofd.FileName.Contains(Properties.Settings.Default.ODSTEKPath + @"\tags"))
                 {
-                    MessageBox.Show("You tried to open a tag outside of your working directory. Bad!", "Oops...");
+                    CustomMessageBox.Show("You tried to open a tag outside of your working directory. Bad!", "Oops...");
                 }
                 else
                 {
@@ -290,11 +299,7 @@ namespace PresentationODST
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            if (!InitializeProject())
-            {
-                MessageBox.Show("Please navigate to your editing kit root folder.", "Startup", MessageBoxButton.OK);
-                Utilities.Path.SetODSTEKPath();
-            }
+            InitializeProject();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -306,8 +311,8 @@ namespace PresentationODST
                 return;
             }
             // Consider making a custom MessageBox control instead of using the default
-            MessageBoxResult cancelMsg = MessageBox.Show("Are you sure you want to exit the program?\nAny unsaved changes will be lost", "Exit", MessageBoxButton.OKCancel);
-            if (cancelMsg != MessageBoxResult.OK)
+            bool? result = CustomMessageBox.Show("Are you sure you want to exit the program?\nAny unsaved changes will be lost", "Exit", CustomMessageBox.ButtonType.OKCancel);
+            if (result != true)
             {
                 e.Cancel = true;
             }
