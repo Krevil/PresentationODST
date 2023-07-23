@@ -56,6 +56,7 @@ namespace PresentationODST
         public void InitializeProject()
         {
             string ProjectDir = Properties.Settings.Default.ODSTEKPath.Length <= 0 ? Directory.GetCurrentDirectory() : Properties.Settings.Default.ODSTEKPath;
+            WPF.Log("Current directory is {0}", ProjectDir);
             
             if (!Directory.Exists(ProjectDir + "\\tags"))
             {
@@ -299,7 +300,7 @@ namespace PresentationODST
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            InitializeProject();
+            
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -320,8 +321,10 @@ namespace PresentationODST
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+            InitializeProject();
             if (Properties.Settings.Default.OpenTags == null) return;
             if (Properties.Settings.Default.OpenTags.Count <= 0) return;
+            if (!Bungie.ManagedBlamSystem.IsInitialized) return;
             Reopener = new TagReopener();
             Reopener.Owner = Main_Window;
             if (Reopener.ShowDialog() == true)
