@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PresentationODST.Dialogs"
         mc:Ignorable="d"
-        Title=""  ShowInTaskbar="False" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterOwner" Width="320">
+        Title=""  ShowInTaskbar="False" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" Width="320">
     <Grid x:Name="MessageBoxGrid" Background="#FFD1D1D1">
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
@@ -20,7 +20,7 @@
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="BodyText" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Background="#FFD1D1D1" TextWrapping="Wrap"/>
+        <TextBlock x:Name="BodyText" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Background="#FFD1D1D1" TextWrapping="Wrap" TextAlignment="Center"/>
         <Button x:Name="YesButton" Content="Yes" Grid.Row="4" Grid.Column="1" Height="21" Width="78" Click="OkButton_Click" Visibility="Hidden"/>
         <Button x:Name="OKButton" Content="OK" Grid.Row="4" Grid.Column="2" Height="21" Width="78" Click="OkButton_Click"/>
         <Button x:Name="NoButton" Content="No" Grid.Row="4" Grid.Column="3" Height="21" Width="78" Click="CancelButton_Click" Visibility="Hidden"/>
