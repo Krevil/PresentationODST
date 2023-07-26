@@ -19,7 +19,7 @@ namespace PresentationODST.ManagedBlam
 
         public static void OpenTag(string filename)
         {
-            string[] OpenPath = Path.GetTagsRelativePath(filename).Split('.');
+            string[] OpenPath = Path.GetTagsRelativePathAndExtension(filename);
             if (Bungie.Tags.TagGroupType.GetGroupTypeFromExtension(OpenPath[1]) == null)
             {
                 CustomMessageBox.Show("Unsupported file type", "Tag Load Error");
@@ -42,7 +42,6 @@ namespace PresentationODST.ManagedBlam
             };
             TagView NewTagView = (TagView)TagTab.Content;
             NewTagView.TagFile = NewTag;
-            NewTagView.TagRelativePath.Text = NewTag.Path.RelativePathWithExtension;
             TagTab.ToolTip = new ToolTip { Content = OpenTagPath.RelativePathWithExtension };
             foreach (Bungie.Tags.TagField field in NewTag.Fields)
             {
@@ -55,7 +54,7 @@ namespace PresentationODST.ManagedBlam
 
         public static void NewTag()
         {
-            MainWindow.GroupSelector = new Dialogs.TagGroupSelector();
+            MainWindow.GroupSelector = new TagGroupSelector();
             if (MainWindow.GroupSelector.ShowDialog() == true)
             {
                 LayoutDocumentPane ldp = MainWindow.Main_Window.TagDocuments;
@@ -70,7 +69,6 @@ namespace PresentationODST.ManagedBlam
                 };
                 TagView NewTagView = (TagView)TagTab.Content;
                 NewTagView.TagFile = NewTag;
-                NewTagView.TagRelativePath.Text = NewTag.Path.RelativePathWithExtension;
                 foreach (Bungie.Tags.TagField field in NewTag.Fields)
                 {
                     AddFieldValues(NewTagView.TagGrid, field);

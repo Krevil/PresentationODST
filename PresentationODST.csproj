@@ -381,6 +381,9 @@
     <Compile Include="Dialogs\TagReopener.xaml.cs">
       <DependentUpon>TagReopener.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TagExitSaver.xaml.cs">
+      <DependentUpon>TagExitSaver.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\TagRenamer.xaml.cs">
       <DependentUpon>TagRenamer.xaml</DependentUpon>
     </Compile>
@@ -508,6 +511,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\TagReopener.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\TagExitSaver.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

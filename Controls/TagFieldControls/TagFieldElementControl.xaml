@@ -6,6 +6,11 @@
              xmlns:local="clr-namespace:PresentationODST.Controls.TagFieldControls"
              mc:Ignorable="d" Margin="0,3,0,3">
     <Grid>
+        <Grid.ContextMenu>
+            <ContextMenu x:Name="GridContextMenu">
+                
+            </ContextMenu>
+        </Grid.ContextMenu>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/> <!-- For hints -->
             <ColumnDefinition Width="250"/>

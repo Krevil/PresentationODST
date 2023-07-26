@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using PresentationODST.Dialogs;
@@ -19,6 +21,31 @@ namespace PresentationODST.Utilities
             {
                 return path;
             }                
+        }
+
+        public static string[] GetTagsRelativePathAndExtension(string path)
+        {
+            List<string> result = new List<string>();
+           
+            if (path.Contains(Properties.Settings.Default.ODSTEKPath))
+            {
+                result = new List<string>(path.Substring(Properties.Settings.Default.ODSTEKPath.Length + 6).Split('.'));
+            }
+            else if (path.Contains("tags"))
+            {
+                result = new List<string>(path.Substring(path.IndexOf("tags") + 5).Split('.'));
+            }
+            // If for some ungodly reason a user thinks it's a great idea to have multiple periods in their file names
+            if (result.Count > 2)
+            {
+                string newFileName = "";
+                for (int i = 0; i < result.Count - 1; i++)
+                {
+                    newFileName += result[i];
+                }
+                result = new List<string> { newFileName, result[result.Count - 1] };
+            }
+            return result.ToArray();
         }
 
         public static string ODSTEKTagsPath = Properties.Settings.Default.ODSTEKPath + @"\tags\";

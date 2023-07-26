@@ -21,8 +21,8 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="BodyText" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Background="#FFD1D1D1" TextWrapping="Wrap" TextAlignment="Center"/>
-        <Button x:Name="YesButton" Content="Yes" Grid.Row="4" Grid.Column="1" Height="21" Width="78" Click="OkButton_Click" Visibility="Hidden"/>
-        <Button x:Name="OKButton" Content="OK" Grid.Row="4" Grid.Column="2" Height="21" Width="78" Click="OkButton_Click"/>
-        <Button x:Name="NoButton" Content="No" Grid.Row="4" Grid.Column="3" Height="21" Width="78" Click="CancelButton_Click" Visibility="Hidden"/>
+        <Button x:Name="LeftButton" Content="Yes" Grid.Row="4" Grid.Column="1" Height="21" Width="78" Visibility="Hidden"/>
+        <Button x:Name="MiddleButton" Content="OK" Grid.Row="4" Grid.Column="2" Height="21" Width="78"/>
+        <Button x:Name="RightButton" Content="No" Grid.Row="4" Grid.Column="3" Height="21" Width="78" Visibility="Hidden"/>
     </Grid>
 </Window>

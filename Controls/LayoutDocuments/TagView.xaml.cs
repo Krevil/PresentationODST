@@ -21,7 +21,20 @@ namespace PresentationODST.Controls.LayoutDocuments
     /// </summary>
     public partial class TagView : UserControl
     {
-        public Bungie.Tags.TagFile TagFile;
+        private Bungie.Tags.TagFile _TagFile;
+        public Bungie.Tags.TagFile TagFile
+        {
+            get
+            {
+                return _TagFile;
+            }
+            set
+            {
+                _TagFile = value;
+                TagRelativePath.Text = value.Path.RelativePathWithExtension;
+                Checksum = value.CalculateFieldChecksum();
+            }
+        }
 
         public TagView()
         {
@@ -37,11 +50,24 @@ namespace PresentationODST.Controls.LayoutDocuments
         public void Save()
         {
             TagFile.Save();
+            Checksum = TagFile.CalculateFieldChecksum();
         }
 
         public void SaveAs(Bungie.Tags.TagPath path)
         {
             TagFile.SaveAs(path);
+            Checksum = TagFile.CalculateFieldChecksum();
+        }
+
+        public uint Checksum { get; set; }
+        public bool TagChanged()
+        {
+            return Checksum != TagFile.CalculateFieldChecksum();
+        }
+
+        public bool TagExists()
+        {
+            return System.IO.File.Exists(TagFile.Path.Filename);
         }
 
         // There is much that could be improved here but it's somewhat functional for now

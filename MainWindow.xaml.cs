@@ -140,7 +140,7 @@ namespace PresentationODST
                 };
                 if (sfd.ShowDialog() == true)
                 {
-                    string[] SavePath = Utilities.Path.GetTagsRelativePath(sfd.FileName).Split('.');
+                    string[] SavePath = Utilities.Path.GetTagsRelativePathAndExtension(sfd.FileName);
                     SaveTagView.SaveAs(Bungie.Tags.TagPath.FromPathAndExtension(SavePath[0], SavePath[1]));
                 }
             }
@@ -160,7 +160,7 @@ namespace PresentationODST
             };
             if (sfd.ShowDialog() == true)
             {
-                string[] SavePath = Utilities.Path.GetTagsRelativePath(sfd.FileName).Split('.');
+                string[] SavePath = Utilities.Path.GetTagsRelativePathAndExtension(sfd.FileName);
                 TagView SaveAsTagView = (TagView)TagDocuments.Children[TagDocuments.SelectedContentIndex].Content;
                 Bungie.Tags.TagPath saveTagPath = Bungie.Tags.TagPath.FromPathAndExtension(SavePath[0], SavePath[1]);
                 SaveAsTagView.SaveAs(saveTagPath);
@@ -305,17 +305,26 @@ namespace PresentationODST
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            // Replace code here to check if there are unsaved documents
             if (TagDocuments.Children.Count <= 0)
             {
-                e.Cancel = false;
                 return;
             }
-            // Consider making a custom MessageBox control instead of using the default
-            bool? result = CustomMessageBox.Show("Are you sure you want to exit the program?\nAny unsaved changes will be lost", "Exit", CustomMessageBox.ButtonType.OKCancel);
-            if (result != true)
+            List<TagToSave> tagsToSave = new List<TagToSave>();
+            foreach (LayoutDocument ld in TagDocuments.Children.Reverse())
             {
-                e.Cancel = true;
+                if (ld.Content is TagView tv && tv.TagChanged())
+                {
+                    tagsToSave.Add(new TagToSave { TagName = tv.TagRelativePath.Text, TagView = tv, ShouldSave = true });
+                }
+            }
+            if (tagsToSave.Count > 0)
+            {
+                TagExitSaver tes = new TagExitSaver(tagsToSave);
+                tes.Owner = Main_Window;
+                if (tes.ShowDialog() != true)
+                {
+                    e.Cancel = true;
+                }
             }
         }
 
@@ -379,6 +388,28 @@ namespace PresentationODST
             string FolderPath = System.IO.Path.GetFullPath(((TagSearchFile)((MenuItem)sender).DataContext).TagInfo.DirectoryName);
             if (FolderPath == null || FolderPath == "") return;
             Process.Start("explorer.exe", FolderPath);
+        }
+
+        private void TagDock_DocumentClosing(object sender, Xceed.Wpf.AvalonDock.DocumentClosingEventArgs e)
+        {
+            if (e.Document.Content is TagView tv)
+            {
+                if (tv.TagChanged())
+                {
+                    bool? result = CustomMessageBox.Show("Save changes to the tag?", "Close", CustomMessageBox.ButtonType.YesNoCancel);
+                    switch (result)
+                    {
+                        case true:
+                            tv.Save();
+                            break;
+                        case false:
+                            break;
+                        case null:
+                            e.Cancel = true;
+                            break;
+                    }
+                }
+            }
         }
     }
 

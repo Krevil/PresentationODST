@@ -234,7 +234,7 @@
                     </TransformGroup>
                 </cv:ChiefIcon.RenderTransform>
             </cv:ChiefIcon>
-            <avalon:DockingManager x:Name="TagDock" Background="{x:Null}" DocumentClosed="TagDock_DocumentClosed">
+            <avalon:DockingManager x:Name="TagDock" Background="{x:Null}" DocumentClosed="TagDock_DocumentClosed" DocumentClosing="TagDock_DocumentClosing">
                 <avalon:LayoutRoot>
                     <avalon:LayoutRoot.LeftSide>
                         <avalon:LayoutAnchorSide/>

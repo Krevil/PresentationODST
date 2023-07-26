@@ -17,7 +17,7 @@
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
         <Rectangle Grid.Row="0" Grid.ColumnSpan="2" Fill="#FF949494"/>
-        <TextBlock x:Name="TagRelativePath" Text="" Padding="2,0,0,0" Height="20" Grid.Row="0" Grid.Column="0" Background="#FF949494"/>
+        <TextBox x:Name="TagRelativePath" Text="" Padding="2,0,0,0" Height="20" Grid.Row="0" Grid.Column="0" Background="#FF949494" IsReadOnly="True"/>
         <toolkit:WatermarkTextBox x:Name="TagSearchBox" Grid.Row="0" Grid.Column="1" Watermark="Search fields..." Background="#FFECECEC" Height="23" TextChanged="TagSearchBox_TextChanged"/>
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
             <Grid x:Name="TagGrid" Background="#FFBDBDBD" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">

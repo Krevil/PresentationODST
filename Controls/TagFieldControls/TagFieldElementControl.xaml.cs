@@ -62,6 +62,9 @@ namespace PresentationODST.Controls.TagFieldControls
                     HintTextBlock.Visibility = Visibility.Visible;
                     ((ToolTip)ToolTipService.GetToolTip(HintTextBlock)).Content = value.Description;
                 }
+                GridContextMenu.Items.Add(new TextBlock { Text = "Field Path: " + value.FieldPath });
+                GridContextMenu.Items.Add(new TextBlock { Text = "Field Checksum: " + value.CalculateFieldChecksum().ToString() });
+                GridContextMenu.Items.Add(new TextBlock { Text = "Address: " + value.Address });
             }
         }
 
@@ -69,7 +72,10 @@ namespace PresentationODST.Controls.TagFieldControls
         {
             if (!IsLoaded) return;
             if (double.TryParse(ValueTextBox.Text, out _))
+            {
                 _TagField.SetStringData(ValueTextBox.Text);
+                ((TextBlock)GridContextMenu.Items[1]).Text = "Field Checksum: " + _TagField.CalculateFieldChecksum().ToString();
+            }
         }
     }
 }
