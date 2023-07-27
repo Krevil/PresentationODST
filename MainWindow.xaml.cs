@@ -35,9 +35,9 @@ namespace PresentationODST
     // Make empty tag blocks viewable
     // More logging? Add clear logger button
     // Run Tool menu
-    // Unsaved tags warning before shutdown
     // Add something to show those annoying struct fields
     // Launch scenario UI. Should be some stuff for this in ManagedBlam
+    // Add tagfield context menu info for all controls, copy what's in tagfieldelementcontrol
 
     public partial class MainWindow : Window
     {

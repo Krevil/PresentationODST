@@ -35,6 +35,10 @@ namespace PresentationODST.Utilities
             {
                 result = new List<string>(path.Substring(path.IndexOf("tags") + 5).Split('.'));
             }
+            else // Assume the path is already relative
+            {
+                result = new List<string>(path.Split('.'));
+            }
             // If for some ungodly reason a user thinks it's a great idea to have multiple periods in their file names
             if (result.Count > 2)
             {
