@@ -56,9 +56,10 @@ namespace PresentationODST
         public void InitializeProject()
         {
             string ProjectDir = Properties.Settings.Default.ODSTEKPath.Length <= 0 ? Directory.GetCurrentDirectory() : Properties.Settings.Default.ODSTEKPath;
+            string TagsDir = ProjectDir + "\\tags";
             WPF.Log("Current directory is {0}", ProjectDir);
             
-            if (!Directory.Exists(ProjectDir + "\\tags"))
+            if (!Directory.Exists(TagsDir))
             {
                 if (CustomMessageBox.Show("Couldn't find a tags folder in your editing kit directory. Set custom editing kit path?", "Error", CustomMessageBox.ButtonType.YesNo) == true)
                 {
@@ -74,7 +75,7 @@ namespace PresentationODST
             }
 
             TagExplorer.DataContext = new TagDirectory();
-            DirectoryInfo dirInfo = new DirectoryInfo(Utilities.Path.ODSTEKTagsPath);
+            DirectoryInfo dirInfo = new DirectoryInfo(TagsDir);
             List<TagSearchFile> tsfList = new List<TagSearchFile>();
             foreach (FileInfo fi in dirInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList())
             {
@@ -85,7 +86,7 @@ namespace PresentationODST
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(TagSearchListView.ItemsSource);
             view.Filter = TagSearchFilter;
 
-            Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, Properties.Settings.Default.ODSTEKPath);          
+            Bungie.ManagedBlamSystem.InitializeProject(Bungie.InitializationType.TagsOnly, ProjectDir);          
         }
 
         private void CommandBinding_Open_Executed(object sender, ExecutedRoutedEventArgs e)
