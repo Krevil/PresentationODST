@@ -69,10 +69,10 @@ namespace PresentationODST.Controls.TagFieldControls
                         fieldColor.R = (byte)(double.Parse(Value2TextBox.Text) * 255d);
                         fieldColor.G = (byte)(double.Parse(Value3TextBox.Text) * 255d);
                         fieldColor.B = (byte)(double.Parse(Value4TextBox.Text) * 255d);
-                        ValueColorPicker.SelectedColor = fieldColor;
                         break;
                 }
-                
+                ValueColorPicker.SelectedColor = fieldColor;
+
                 NameTextBlock.Text = value.FieldName;
                 if (value.Description.Length > 0)
                 {
