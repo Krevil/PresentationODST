@@ -251,6 +251,7 @@ namespace PresentationODST.Controls.TagFieldControls
 
         private void ReplaceElement_Click(object sender, RoutedEventArgs e)
         {
+            if (_TagField.Elements.Count <= 0) return;
             if (_TagField.ClipboardContainsBlockElement() && SourceFieldPath == _TagField.FieldPath)
             {
                 _TagField.PasteReplaceElement(BlockListComboBox.SelectedIndex);

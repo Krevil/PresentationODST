@@ -47,5 +47,18 @@ namespace PresentationODST.Utilities
             MainWindow.Main_Window.OutputWindowTextBlock.ScrollToEnd();
             MainWindow.Main_Window.OutputWindowTextBlock.UpdateLayout();
         }
+
+        public static void AddFieldContextMenu(ContextMenu gridContextMenu, Bungie.Tags.TagField field)
+        {
+            Button fieldPathButton = new Button { Content = new TextBlock { Text = "Field Path: " + field.FieldPath } };
+            Button fieldChecksumButton = new Button { Content = new TextBlock { Text = "Field Checksum: " + field.CalculateFieldChecksum().ToString() } };
+            Button addressButton = new Button { Content = new TextBlock { Text = "Address: " + field.Address } };
+            fieldPathButton.Click += (s, e) => { Clipboard.SetText(field.FieldPath); };
+            fieldChecksumButton.Click += (s, e) => { Clipboard.SetText(field.CalculateFieldChecksum().ToString()); };
+            addressButton.Click += (s, e) => { Clipboard.SetText(field.Address.ToString()); };
+            gridContextMenu.Items.Add(fieldPathButton);
+            gridContextMenu.Items.Add(fieldChecksumButton);
+            gridContextMenu.Items.Add(addressButton);
+        }
     }
 }

@@ -83,7 +83,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\ODSTIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Images\ChiefIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -589,13 +589,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Images\ODSTIcon.ico" />
+    <Resource Include="Images\ODSTIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ODSTSplash.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\ChiefSplash.png" />
+    <SplashScreen Include="Images\ChiefSplash.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ChiefIcon.ico" />

@@ -7,12 +7,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PresentationODST.Controls.TagFieldControls;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace PresentationODST.Controls.LayoutDocuments
 {
@@ -56,6 +58,16 @@ namespace PresentationODST.Controls.LayoutDocuments
         public void SaveAs(Bungie.Tags.TagPath path)
         {
             TagFile.SaveAs(path);
+            // yeah I hate this too but it's kinda required
+            TagGrid.RowDefinitions.Clear();
+            TagGrid.Children.Clear();
+            TagFile = new Bungie.Tags.TagFile(path);
+            MainWindow.Main_Window.TagDocuments.Children[MainWindow.Main_Window.TagDocuments.SelectedContentIndex].Title = path.ShortNameWithExtension;
+            ToolTip = new ToolTip { Content = path.RelativePathWithExtension };
+            foreach (Bungie.Tags.TagField field in TagFile.Fields)
+            {
+                ManagedBlam.Tags.AddFieldValues(TagGrid, field);
+            }
             Checksum = TagFile.CalculateFieldChecksum();
         }
 
