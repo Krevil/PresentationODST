@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PresentationODST.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -225,8 +226,6 @@ namespace PresentationODST.Controls.TagFieldControls
             }
         }
 
-        private static string SourceFieldPath;
-
         public bool PasteEntireBlockEnabled
         {
             get
@@ -246,13 +245,12 @@ namespace PresentationODST.Controls.TagFieldControls
         private void CopyElement_Click(object sender, RoutedEventArgs e)
         {
             _TagField.CopyElement(BlockListComboBox.SelectedIndex);
-            SourceFieldPath = _TagField.FieldPath;
         }
 
         private void ReplaceElement_Click(object sender, RoutedEventArgs e)
         {
             if (_TagField.Elements.Count <= 0) return;
-            if (_TagField.ClipboardContainsBlockElement() && SourceFieldPath == _TagField.FieldPath)
+            if (_TagField.ClipboardContainsBlockElement())
             {
                 _TagField.PasteReplaceElement(BlockListComboBox.SelectedIndex);
                 RefreshBlock();
@@ -260,7 +258,7 @@ namespace PresentationODST.Controls.TagFieldControls
         }
         private void InsertElement_Click(object sender, RoutedEventArgs e)
         {
-            if (_TagField.ClipboardContainsBlockElement() && SourceFieldPath == _TagField.FieldPath)
+            if (_TagField.ClipboardContainsBlockElement())
             {
                 _TagField.PasteInsertElement(BlockListComboBox.SelectedIndex);
                 RefreshBlock();
@@ -269,7 +267,7 @@ namespace PresentationODST.Controls.TagFieldControls
 
         private void AppendElement_Click(object sender, RoutedEventArgs e)
         {
-            if (_TagField.ClipboardContainsBlockElement() && SourceFieldPath == _TagField.FieldPath)
+            if (_TagField.ClipboardContainsBlockElement())
             {
                 _TagField.PasteAppendElement();
                 RefreshBlock();
@@ -279,12 +277,11 @@ namespace PresentationODST.Controls.TagFieldControls
         private void CopyBlock_Click(object sender, RoutedEventArgs e)
         {
             _TagField.CopyEntireTagBlock();
-            SourceFieldPath = _TagField.FieldPath;
         }
 
         private void ReplaceBlock_Click(object sender, RoutedEventArgs e)
         {
-            if (_TagField.ClipboardContainsEntireBlock() && SourceFieldPath == _TagField.FieldPath)
+            if (_TagField.ClipboardContainsEntireBlock())
             {
                 _TagField.PasteReplaceEntireBlock();
                 RefreshBlock();
@@ -293,7 +290,7 @@ namespace PresentationODST.Controls.TagFieldControls
 
         private void AppendBlock_Click(object sender, RoutedEventArgs e)
         {
-            if (_TagField.ClipboardContainsEntireBlock() && SourceFieldPath == _TagField.FieldPath)
+            if (_TagField.ClipboardContainsEntireBlock())
             {
                 _TagField.PasteAppendEntireBlock();
                 RefreshBlock();
