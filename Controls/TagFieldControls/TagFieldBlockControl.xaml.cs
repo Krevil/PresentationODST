@@ -178,7 +178,7 @@ namespace PresentationODST.Controls.TagFieldControls
             int CurrentIndex = BlockListComboBox.SelectedIndex;
             _TagField.DuplicateElement(CurrentIndex);
             RefreshBlock();
-            BlockListComboBox.SelectedIndex = CurrentIndex + 1;
+            BlockListComboBox.SelectedIndex = BlockListComboBox.Items.Count - 1; // Duplicate will send the new block to the end
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
